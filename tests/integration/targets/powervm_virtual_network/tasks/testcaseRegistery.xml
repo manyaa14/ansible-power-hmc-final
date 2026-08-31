@@ -1,0 +1,29 @@
+<TestSuite>
+  <TestCases>
+    <!-- Negative: missing mandatory params -->
+    <TestCase platform="asterix">1ErrorMissingHmcHost.yaml</TestCase>
+    <TestCase platform="asterix">2ErrorMissingHmcAuth.yaml</TestCase>
+    <TestCase platform="asterix">3ErrorMissingSystemName.yaml</TestCase>
+    <TestCase platform="asterix">4ErrorPresentMissingNetworkName.yaml</TestCase>
+    <TestCase platform="asterix">5ErrorPresentMissingVlanId.yaml</TestCase>
+    <TestCase platform="asterix">6ErrorPresentMissingSwitchNameAndId.yaml</TestCase>
+    <TestCase platform="asterix">7ErrorPresentBothSwitchNameAndId.yaml</TestCase>
+    <TestCase platform="asterix">8ErrorAbsentMissingNetworkName.yaml</TestCase>
+    <TestCase platform="asterix">9ErrorUpdatedMissingNetworkName.yaml</TestCase>
+    <TestCase platform="asterix">10ErrorUpdatedMissingNewNetworkName.yaml</TestCase>
+    <!-- Positive: facts -->
+    <TestCase platform="asterix">11FactsAllNetworks.yaml</TestCase>
+    <TestCase platform="asterix">12FactsSpecificNetwork.yaml</TestCase>
+    <!-- Positive: present -->
+    <TestCase platform="asterix">13CreateWithSwitchNameUntagged.yaml</TestCase>
+    <TestCase platform="asterix">14CreateWithSwitchNameTagged.yaml</TestCase>
+    <TestCase platform="asterix">15CreateIdempotency.yaml</TestCase>
+    <TestCase platform="asterix">16CreateWithSwitchId.yaml</TestCase>
+    <!-- Positive: updated -->
+    <TestCase platform="asterix">17UpdateNetworkName.yaml</TestCase>
+    <TestCase platform="asterix">18FactsAfterUpdate.yaml</TestCase>
+    <!-- Positive: absent + cleanup -->
+    <TestCase platform="asterix">19DeleteNetwork.yaml</TestCase>
+    <TestCase platform="asterix">20Cleanup.yaml</TestCase>
+  </TestCases>
+</TestSuite>

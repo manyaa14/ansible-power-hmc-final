@@ -1,0 +1,45 @@
+<TestSuite>
+	<TestCases>
+		<TestCase platform="asterix">8Errorwhenuseridpasswdfornfsupgrade.yaml</TestCase>
+		<TestCase platform="asterix">7Errorwhenuseridpasswdfornfsupdate.yaml</TestCase>
+		<TestCase platform="asterix">9Errorwhenmountlocationmissingfornfs.yaml</TestCase>
+		              <TestCase platform="asterix">10Errorwhenmountlocationmissingfornfsupgrade.yaml</TestCase>
+		              <TestCase platform="asterix">11Errorwhenbuildfilemissingfornfs.yaml</TestCase>
+		<TestCase platform="asterix">12Errorwhenbuildfilemissingfornfs.yaml</TestCase>
+		<TestCase platform="asterix">13Errorwhensshkeymentionedfornfsupdate.yaml</TestCase>
+		              <TestCase platform="asterix">14Errorwhensshkeymentionedfornfsupgrade.yaml</TestCase>
+		              <TestCase platform="asterix">15Errorwhensshkeypasswdmissingforsftpupgrade.yaml</TestCase>
+		              <TestCase platform="asterix">16Errorwhensshkeypasswdmissingforsftpupdate.yaml</TestCase>
+		              <TestCase platform="asterix">17Errorwhenbothsshkeyandpasswdmentionedfornfsupdate.yaml</TestCase>
+		<TestCase platform="asterix">18Errorwhenbothsshkeyandpasswdmentionedfornfsupgrade.yaml</TestCase>
+		<TestCase platform="asterix">19Errorwhenhostnameuseridbuildfilemissingforsftpupdate.yaml</TestCase>
+		<TestCase platform="asterix">20Errorwhenhostnameuseridbuildfilemissingforsftpupgrade.yaml</TestCase>
+		<TestCase platform="asterix">21Errorwhenhostnamebuildfileuseridmissingforftpupdate.yaml</TestCase>
+		              <TestCase platform="asterix">22Errorwhenhostnamebuildfileuseridmissingforftpupgrade.yaml</TestCase>
+		              <TestCase platform="asterix">23Errwhenmountlocationsshkeyfilementionedforftpupgrade.yaml</TestCase>
+		<TestCase platform="asterix">24Errwhenmountlocationsshkeyfilementionedforftpupdate.yaml</TestCase>
+		<TestCase platform="asterix">25Errwhenuseridpasswdhostnamementionedfordiskupdate.yaml</TestCase>
+		<TestCase platform="asterix">26Errwhenuseridpasswdhostnamementionedfordiskupgrade.yaml</TestCase>
+		<TestCase platform="asterix">27Errorwhenmountlocationsshkeyfilefordiskupdate.yaml</TestCase>
+		<TestCase platform="asterix">28Errorwhenmountlocationsshkeyfilefordiskupgrade.yaml</TestCase>
+		<TestCase platform="asterix">29Errorwhenbuildfilemissingfordiskupdate.yaml</TestCase>
+		              <TestCase platform="asterix">30Errorwhenbuildfilemissingfordiskupgrade.yaml</TestCase>
+		<TestCase platform="asterix">31Errorwhenlocationtypenotmentionedforupdate.yaml</TestCase>
+		<TestCase platform="asterix">32Errorwhenlocationtypenotmentionedforupgrade.yaml</TestCase>
+		              <TestCase platform="asterix">33Errorhostnamemissingfornfsupgrade.yaml</TestCase>
+		<TestCase platform="asterix">34Errorhostnamemissingfornfsupdate.yaml</TestCase>
+		<TestCase platform="asterix">35whensshkeyfilementionedfornfsupgrade.yaml</TestCase>
+		<TestCase platform="asterix">36whensshkeyfilementionedfornfsupdate.yaml</TestCase>
+		<TestCase platform="asterix">39Errorwhenbuildconfigmentionedforfacts.yaml</TestCase>
+		<TestCase platform="asterix">40facts.yaml</TestCase>
+		<!-- <TestCase platform="asterix">2ftpupdate.yaml</TestCase>
+		<TestCase platform="asterix">3sftpupdate.yaml</TestCase> -->
+		<TestCase platform="asterix">1nfsupdate.yaml</TestCase>
+		<!-- <TestCase platform="asterix">6diskupdate.yaml</TestCase> -->
+		<!-- <TestCase platform="asterix">4sftpupdatewithssh.yaml</TestCase> -->
+		<!-- <TestCase platform="asterix">41nfsupgrade.yaml</TestCase>
+		<TestCase platform="asterix">42ftpupgrade.yaml</TestCase>
+		<TestCase platform="asterix">43sftpupgrade.yaml</TestCase>
+		<TestCase platform="asterix">44diskupgrade.yaml</TestCase> -->
+	</TestCases>
+</TestSuite>

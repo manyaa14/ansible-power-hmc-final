@@ -1,0 +1,26 @@
+- name: Create CNA idempotency — running same create should not change
+  block:
+    - name: Create CNA on LPAR again (idempotency check)
+      powervm_client_network_adapter:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        virtual_network_name: "{{ virtual_network_name }}"
+        state: present
+      register: testout
+
+    - name: Debug idempotency output
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify idempotent create does not report changed
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

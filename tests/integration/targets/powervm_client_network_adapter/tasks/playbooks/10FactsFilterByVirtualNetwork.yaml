@@ -1,0 +1,26 @@
+- name: Get CNA facts filtered by virtual network name
+  block:
+    - name: Get CNA facts filtered by virtual_network_name
+      powervm_client_network_adapter:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        virtual_network_name: "{{ virtual_network_name }}"
+        state: facts
+      register: testout
+
+    - name: Debug filtered CNA facts output
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify filtered CNA facts are returned
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

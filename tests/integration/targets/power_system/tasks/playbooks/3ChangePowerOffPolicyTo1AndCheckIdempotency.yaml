@@ -1,0 +1,37 @@
+- name: Testcase3
+  block:
+    - name: Change cec power_off_policy to 1
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        power_off_policy: "{{ power_off_policy_1 }}"
+        action: "{{ action_modify_syscfg }}"
+      register: result
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Testcase4 Verify that changing power_off_policy from 1to1 or 0to0 shows changed=0 
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        power_off_policy: "{{ power_off_policy_1 }}"
+        action: "{{ action_modify_syscfg }}"
+      register: result
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is success
+          - result is not changed
+
+  rescue:
+    - name: Mark this testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}" 
+

@@ -1,0 +1,30 @@
+- name: Verify delete rejects unsupported parameters
+  block:
+    - name: Delete virtual switch with unsupported parameters
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_delete_existing }}"
+        virtual_switch_mode: "{{ switch_mode_veb }}"
+        state: absent
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the unsupported delete response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify unsupported parameter error is reported for delete
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'unsupported parameter: virtual_switch_mode' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

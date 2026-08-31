@@ -1,0 +1,32 @@
+- name: Verify create fails when hardware page table ratio is out of range
+  block:
+    - name: Create shared partition profile with invalid hardware page table ratio
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_memory_expansion }}"
+        state: present
+        memory_settings: "{{ memory_settings_invalid_hardware_ratio }}"
+        processor_settings: "{{ shared_processor_settings_pool }}"
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the invalid hardware page table ratio response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify hardware page table ratio range error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'hardware_page_tableratio must be between 5 and 9' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

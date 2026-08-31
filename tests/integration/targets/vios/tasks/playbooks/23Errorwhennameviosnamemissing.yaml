@@ -1,0 +1,26 @@
+- name: Reports error when we miss name, hmc_auth,hmc_host for VIOS Facts
+  block:
+    - name: Reports error when we miss name, hmc_auth,hmc_host for VIOS Facts
+      vios:
+        state: facts
+      register: testout
+      ignore_errors: yes
+
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify play reports error
+      assert:
+        that:
+          - "'missing required arguments: hmc_auth, hmc_host' in testout.msg"
+          - testout is failed
+          - testout is not changed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+   
+  

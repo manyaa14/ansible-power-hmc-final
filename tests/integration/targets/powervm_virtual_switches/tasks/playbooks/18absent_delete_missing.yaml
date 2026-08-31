@@ -1,0 +1,37 @@
+- name: Verify delete reports a missing virtual switch without change
+  block:
+    - name: Ensure delete-missing switch is absent
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_delete_missing }}"
+        state: absent
+      register: absent_out
+
+    - name: Delete a missing virtual switch
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_delete_missing }}"
+        state: absent
+      register: testout
+
+    - name: Stdout the missing-delete response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify missing switch is reported without change
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+          - "'not found' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

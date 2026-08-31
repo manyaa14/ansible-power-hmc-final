@@ -1,0 +1,40 @@
+- name: Verify virtual switch name and mode modification
+  block:
+    - name: Create combined-modify source switch with Veb mode
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        virtual_switch_mode: "{{ switch_mode_veb }}"
+        state: present
+      register: setup_out
+
+    - name: Modify virtual switch name and mode
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        new_switch_name: "{{ switch_name_modify_target }}"
+        virtual_switch_mode: "{{ switch_mode_vepa }}"
+        state: modify
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the combined modify response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify virtual switch name and mode change is rejected
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

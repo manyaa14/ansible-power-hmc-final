@@ -1,0 +1,29 @@
+---
+- name: "TC22 - Attach physical volume to partition via update_pv"
+  block:
+    - name: Run powervm_dlpar update_pv to attach PV
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        pv_settings:
+          - vios_name: "{{ vios_name }}"
+            disk_name: "{{ disk_name }}"
+            target_name: "{{ pv_target_name }}"
+            server_adapter_id: "{{ server_adapter_id }}"
+            client_adapter_id: "{{ client_adapter_id }}"
+        action: update_pv
+      register: result
+
+    - name: Verify task succeeded
+      assert:
+        that:
+          - result is success
+          - result is changed
+          - result.partition_info is defined
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

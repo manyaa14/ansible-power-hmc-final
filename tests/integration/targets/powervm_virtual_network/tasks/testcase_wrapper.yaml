@@ -1,0 +1,29 @@
+- name: Debug testcase platform selection
+  debug:
+    msg: >-
+      selected_test_platform={{ selected_test_platform }} | testcase_name={{ testcase_name }} | testcase_platform={{ testcase_platform }}
+
+- name: Log testcase start marker
+  debug:
+    msg: >-
+      TESTCASE_START|module=powervm_virtual_network|playbook={{ testcase_name }}
+      |id={{ testcase_name | regex_replace('\.[^.]+$', '') }}|platform={{ testcase_platform }}
+  when: >-
+    (selected_test_platform == 'asterix' and testcase_platform == 'asterix') or
+    (selected_test_platform == 'cec' and testcase_platform in ['asterix', 'cec'])
+
+- name: Include testcase playbook
+  include_tasks: '{{ plb_dir }}/{{ testcase_name }}'
+  ignore_errors: true
+  when: >-
+    (selected_test_platform == 'asterix' and testcase_platform == 'asterix') or
+    (selected_test_platform == 'cec' and testcase_platform in ['asterix', 'cec'])
+
+- name: Log testcase end marker
+  debug:
+    msg: >-
+      TESTCASE_END|module=powervm_virtual_network|playbook={{ testcase_name }}
+      |id={{ testcase_name | regex_replace('\.[^.]+$', '') }}|platform={{ testcase_platform }}
+  when: >-
+    (selected_test_platform == 'asterix' and testcase_platform == 'asterix') or
+    (selected_test_platform == 'cec' and testcase_platform in ['asterix', 'cec'])

@@ -1,0 +1,26 @@
+<TestSuite>
+    <TestCases>
+        <!-- Mandatory top-level parameter errors -->
+        <TestCase platform="asterix">1ErrorMissingHmcHost.yaml</TestCase>
+        <TestCase platform="asterix">2ErrorMissingHmcAuth.yaml</TestCase>
+        <TestCase platform="asterix">3ErrorMissingSystemName.yaml</TestCase>
+        <TestCase platform="asterix">4ErrorMissingDescription.yaml</TestCase>
+        <TestCase platform="asterix">5ErrorMissingTypes.yaml</TestCase>
+        <TestCase platform="asterix">6ErrorMissingAttributes.yaml</TestCase>
+        <!-- Mandatory attributes sub-parameter errors -->
+        <TestCase platform="asterix">7ErrorMissingTitle.yaml</TestCase>
+        <TestCase platform="asterix">8ErrorMissingSeverity.yaml</TestCase>
+        <TestCase platform="asterix">9ErrorMissingContactName.yaml</TestCase>
+        <TestCase platform="asterix">10ErrorMissingContactPhone.yaml</TestCase>
+        <TestCase platform="asterix">11ErrorMissingContactEmail.yaml</TestCase>
+        <TestCase platform="asterix">12ErrorMissingServiceFile.yaml</TestCase>
+        <!-- Runtime / value errors -->
+        <TestCase platform="asterix">13ErrorWrongSystemName.yaml</TestCase>
+        <TestCase platform="asterix">14ErrorWrongTypes.yaml</TestCase>
+        <TestCase platform="asterix">15ErrorWrongSeverity.yaml</TestCase>
+        <TestCase platform="asterix">16ErrorWrongLparNameForVios.yaml</TestCase>
+        <TestCase platform="asterix">17ErrorMissingLparNameForVios.yaml</TestCase>
+        <TestCase platform="asterix">18ErrorMissingLparNameForLpm.yaml</TestCase>
+        <TestCase platform="asterix">19ErrorMissingTargetMtmsForLpm.yaml</TestCase>
+    </TestCases>
+</TestSuite>

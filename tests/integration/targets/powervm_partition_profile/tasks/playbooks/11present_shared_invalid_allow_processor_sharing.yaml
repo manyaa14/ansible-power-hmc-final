@@ -1,0 +1,43 @@
+- name: Verify create fails when allow_processor_sharing is used with shared mode
+  block:
+    - name: Create shared partition profile with invalid allow_processor_sharing
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_pool }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings:
+          processor_mode: shared
+          minimum_processing_units: 1.0
+          maximum_processing_units: 1.0
+          desired_processing_units: 1.0
+          desired_processors: 1
+          maximum_processors: 1
+          minimum_processors: 1
+          sharing_mode: uncapped
+          uncapped_weight: 20
+          shared_processor_pool: 0
+          allow_processor_sharing: always
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the invalid shared allow_processor_sharing response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify shared-mode invalid parameter error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'allow_processor_sharing is not valid for shared processor mode' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

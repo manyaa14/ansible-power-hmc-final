@@ -1,0 +1,26 @@
+- name: Get CNA facts filtered by virtual_ethernet_adapter_id
+  block:
+    - name: Get CNA facts for a specific adapter slot
+      powervm_client_network_adapter:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        virtual_ethernet_adapter_id: "{{ virtual_ethernet_adapter_id_create }}"
+        state: facts
+      register: testout
+
+    - name: Debug specific adapter facts output
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify specific adapter facts are returned
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

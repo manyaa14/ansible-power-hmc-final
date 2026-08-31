@@ -1,0 +1,16 @@
+<TestSuite>
+    <TestCases>
+        <!-- migrate action - multiple LPARs with shared_proc_pool -->
+        <TestCase platform="cec">1Migratemultiplelparsvmnameandpoolname.yaml</TestCase>
+        <TestCase platform="asterix">2Errormigratemultiplelparsvmnamepoolidlparname.yaml</TestCase>
+        <TestCase platform="asterix">3Errormigratemultiplelparsvmnamepoolidlparid.yaml</TestCase>
+        <TestCase platform="asterix">4Errormigratemultiplevmidlparidpoolname.yaml</TestCase>
+        <TestCase platform="cec">5Migratemultiplevmidlparidpoolid.yaml</TestCase>
+        <TestCase platform="asterix">6Errormigratebothvmidsandvmnames.yaml</TestCase>
+        <!-- migrate action - single LPAR with shared_proc_pool -->
+        <TestCase platform="cec">7Migratesinglelparwithvmidandpoolname.yaml</TestCase>
+        <TestCase platform="cec">8Migratesinglelparwithvmidandpoolid.yaml</TestCase>
+        <TestCase platform="cec">9Migratesinglelparwithvmnameandpoolid.yaml</TestCase>
+        <TestCase platform="cec">10Migratesinglelparwithvmnameandpoolname.yaml</TestCase>
+    </TestCases>
+</TestSuite>

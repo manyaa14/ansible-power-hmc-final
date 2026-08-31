@@ -1,0 +1,27 @@
+---
+- name: Verify error when subtype is missing in sriov_adapter_update
+  block:
+    - name: Execute platform update with sriov info missing subtype
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          system_firmware_update:
+            update_type: NoUpdate
+            update_order: 1
+            sriov_adapter_update:
+              - adapter_id: "{{ sriov_adapter_id }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'subtype' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,26 @@
+<TestSuite>
+    <TestCases>
+        <!-- copy state -->
+        <TestCase platform="asterix">1Copyrotvgtohdisk1.yaml</TestCase>
+        <TestCase platform="asterix">2Idempotencycopyrootvghdisk1.yaml</TestCase>
+        <TestCase platform="asterix">3Copyrootvghdisk1withforce.yaml</TestCase>
+        <TestCase platform="asterix">4Copyrootvgtohdisk2withforce.yaml</TestCase>
+        <TestCase platform="asterix">5Copyrootvgtohdisk1andhdisk2.yaml</TestCase>
+        <TestCase platform="asterix">6Idempotencycopyrootvghdisk1andhdisk2.yaml</TestCase>
+        <TestCase platform="asterix">7Copyrootvghdisk1andhdisk2withforce.yaml</TestCase>
+        <TestCase platform="asterix">8Copyrootvgtohdisk3andhdisk4withforce.yaml</TestCase>
+        <TestCase platform="asterix">9Errorwrongviosname.yaml</TestCase>
+        <TestCase platform="asterix">10Errorwrongcecname.yaml</TestCase>
+        <TestCase platform="asterix">11Errorbothtargetsanddisksizepolicy.yaml</TestCase>
+        <TestCase platform="asterix">12Errorneithertrargetsordisksizepolicy.yaml</TestCase>
+        <TestCase platform="asterix">13Copyrootvgdisksizepolicyminimize.yaml</TestCase>
+        <TestCase platform="asterix">14Copyrootvgdisksizepolicyupper.yaml</TestCase>
+        <TestCase platform="asterix">15Copyrootvgdisksizepolicylower.yaml</TestCase>
+        <TestCase platform="asterix">16Copyrootvgdisksizepolicynearest.yaml</TestCase>
+        <!-- clean state -->
+        <TestCase platform="asterix">17Cleanallaltrootvg.yaml</TestCase>
+        <TestCase platform="asterix">18Errorcleanhdisk1notanaltrootvg.yaml</TestCase>
+        <TestCase platform="asterix">19Cleanhdisk1whenhdisk1andhdisk2arealtrootvg.yaml</TestCase>
+        <TestCase platform="asterix">20Errorcleanhdisk1andhdisk3onlyhdisk1isaltrootvg.yaml</TestCase>
+    </TestCases>
+</TestSuite>

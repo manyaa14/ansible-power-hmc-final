@@ -1,0 +1,28 @@
+- name: Error when vm_id>max_virtual_slots
+  block:
+    - name: Error when vm_id>max_virtual_slots
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        os_type: "{{ os_type_ibmi }}"
+        vm_id: "{{ vm_id }}"
+        max_virtual_slots: "{{ max_virtual_slots }}"
+        state: present
+      register: result
+      ignore_errors: yes
+
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ result }}'
+
+    - assert:
+        that:
+          - result.failed | default(false)
+          - not (result.changed | default(false))
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

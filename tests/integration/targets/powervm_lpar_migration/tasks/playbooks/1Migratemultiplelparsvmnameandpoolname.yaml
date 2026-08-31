@@ -1,0 +1,33 @@
+---
+- name: Migrate multiple LPARs using vm_names with lpar_name and pool_name in shared_proc_pool
+  block:
+    - name: Migrate lpar1 and lpar2 with multiple shared proc pool names
+      powervm_lpar_migration:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        src_system: "{{ src_system }}"
+        dest_system: "{{ dest_system }}"
+        vm_names:
+          - "{{ vm_name1 }}"
+          - "{{ vm_name2 }}"
+        shared_proc_pool:
+          - lpar_name: "{{ vm_name1 }}"
+            pool_name: "{{ pool_name1 }}"
+          - lpar_name: "{{ vm_name2 }}"
+            pool_name: "{{ pool_name2 }}"
+        action: migrate
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

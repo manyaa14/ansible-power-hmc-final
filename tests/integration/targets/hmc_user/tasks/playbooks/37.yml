@@ -1,0 +1,48 @@
+---
+- name: Delete Users Location
+  block:
+    - name: Delete Users Location
+      hmc_user:
+        state: absent
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ authentication_type }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: result
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Delete Ldap Users
+      hmc_user:
+        state: absent
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ authentication_type_ldap }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: result
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Delete Kerberos Users
+      hmc_user:
+        state: absent
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ authentication_type_kerberos }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: result
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+
+

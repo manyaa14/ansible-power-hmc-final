@@ -1,0 +1,30 @@
+- name: Verify dedicated create fails when processor and memory settings are missing
+  block:
+    - name: Create dedicated partition profile without processor and memory settings
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_dedicated_basic }}"
+        state: present
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the dedicated missing processor and memory response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify dedicated missing processor settings error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'state is present but all of the following are missing: processor_settings, memory_settings' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

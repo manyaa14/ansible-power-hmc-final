@@ -1,0 +1,27 @@
+- name: Error when ldapresource,facts mentioned for facts
+  block:
+    - name: Error when ldapresource,facts mentioned for facts
+      hmc_user:
+        state: ldap_facts
+        ldap_resource: "{{ ldap_resource_bindpw }}"
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        resource: "{{ resource_config }}"  
+        ldap_settings:
+          basedn: "{{ basedn }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - "'ParameterError: unsupported parameters: ldap_settings,ldap_resource' in result.msg"
+          - result is not changed
+          - result is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+
+

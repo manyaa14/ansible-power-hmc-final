@@ -1,0 +1,9 @@
+<TestSuite>
+    <TestCases>
+	<TestCase platform="asterix">1adhoccommand.yaml</TestCase>
+	       <TestCase platform="asterix">2adhoccommandviewer.yaml</TestCase>
+	       <TestCase platform="asterix">3errorwithoutcommand.yaml</TestCase>
+	<TestCase platform="asterix">4errorwithouhmcauth.yaml</TestCase>
+	<TestCase platform="asterix">5adhoccommandwithmultipleusers.yaml</TestCase>
+    </TestCases>
+</TestSuite>

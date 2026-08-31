@@ -1,0 +1,31 @@
+- name: Error-when hostname,build_file,userid are missing
+  block:
+    - name: Error-when hostname,build_file,userid are missing
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config:
+          location_type: "{{ config_ftp['location_type'] }}"
+          sshkey_file: "{{ config_sftp_ssh['sshkey_file'] }}"
+        state: updated
+      register: updated_hmc_build_info
+      ignore_errors: yes
+
+    - name: Stdout the Probed HMC build info
+      debug:
+        msg: '{{ updated_hmc_build_info }}'
+
+    - name: Verify the result
+      assert:
+        that:
+          - updated_hmc_build_info is failed
+          - updated_hmc_build_info is not changed
+          - '"ParameterError: mandatory parameters " in updated_hmc_build_info.msg'
+          - "'hostname,build_file,userid' in updated_hmc_build_info.msg"
+          - "'are missing' in updated_hmc_build_info.msg"
+
+  rescue:
+  - name: Mark the Testcase as FAILED
+    debug:
+      msg: "{{ Status_Fail }}"
+

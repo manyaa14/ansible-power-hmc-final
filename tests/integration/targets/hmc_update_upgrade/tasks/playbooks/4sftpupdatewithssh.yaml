@@ -1,0 +1,42 @@
+- name: SFTP Update with passwordless login to hmc
+  block:
+    - name: Share private key to hmc for passwordless login
+      shell:
+          cmd: |
+              key=`head -n 1 ~/.ssh/id_rsa.pub`
+              sshpass -p abc123 ssh  hscroot@{{ inventory_hostname }} mkauthkeys -a "'$key'"
+
+    - name: List the HMC current build level
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        state: facts
+      register: build_info
+
+    - name: Stdout the probed HMC build info
+      debug:
+        msg: '{{ build_info }}'
+
+    - name: Update the HMC to the XXXX build level using sftp
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config: '{{ config_sftp_ssh }}'
+        state: updated
+      register: updated_hmc_build_info
+
+    - name: Stdout the Probed HMC build info after update
+      debug:
+        msg: '{{ updated_hmc_build_info }}'
+
+    - name: Verify the version
+      assert:
+        that:
+          - updated_hmc_build_info is success
+          - updated_hmc_build_info is changed
+
+  rescue:
+    - name: Mark the Failure
+      debug:
+        msg: "{{ Status_Fail }}"
+

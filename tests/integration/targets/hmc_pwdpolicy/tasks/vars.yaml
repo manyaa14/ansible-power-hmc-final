@@ -1,0 +1,5 @@
+task_dir: targets/hmc_pwdpolicy/tasks
+plb_dir: targets/hmc_pwdpolicy/tasks/playbooks
+
+policy_name: dummy
+status_fail: " TEST FAILED"

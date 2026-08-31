@@ -1,0 +1,43 @@
+- name: Verify dedicated create fails when shared-only parameters are provided
+  block:
+    - name: Create dedicated partition profile with shared-only parameters
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_dedicated_basic }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings:
+          minimum_processing_units: 1.0
+          maximum_processing_units: 1.0
+          desired_processing_units: 1.0
+          desired_processors: 1
+          maximum_processors: 1
+          minimum_processors: 1
+          sharing_mode: uncapped
+          shared_processor_pool: 0
+          uncapped_weight: 20
+          processor_mode: dedicated
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the dedicated invalid shared-params response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify dedicated shared-only parameter error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'Parameters' in testout.msg"
+          - "'not valid for dedicated processor mode' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

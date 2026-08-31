@@ -1,0 +1,27 @@
+- name: error when attributes,enable_user,type are mentioned
+  block:
+    - name: error when attributes,enable_user,type are mentioned
+      hmc_user:
+        state: ldap_facts
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        resource: "{{ resource_config }}"
+        attributes:
+          new_name: "{{ new_name }}"
+        enable_user:  True
+        type: default
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - "'ParameterError: unsupported parameters: attributes,enable_user,type' in result.msg"
+          - result is not changed
+          - result is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+

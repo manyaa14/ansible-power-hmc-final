@@ -1,0 +1,43 @@
+---
+
+Status_Fail: "Mark the Testcase as FAILED"
+
+task_dir: targets/power_system/tasks
+plb_dir: targets/power_system/tasks/playbooks
+selected_test_platform: asterix
+
+system_name: HV4
+new_name: HV5
+
+power_off_policy_0: 0
+power_off_policy_1: 1
+
+requested_num_sys_huge_pages: 3
+revert_requested_num_sys_huge_pages: 4
+
+power_on_lpar_start_policy_autostart: autostart
+power_on_lpar_start_policy_userinit: userinit
+power_on_lpar_start_policy_autorecovery: autorecovery
+
+
+action_modify_syscfg: modify_syscfg
+action_poweroff: poweroff
+action_modify_hwres: modify_hwres
+action_poweron: poweron
+
+state: facts
+
+hugepage_greaterthan_cec_capability: 400
+
+mem_mirroring_mode_none: none
+mem_mirroring_mode_sys_firmware_only: 'sys_firmware_only'
+
+pend_mem_region_size: '32'
+revert_pend_mem_region_size: '16'
+
+cmd:
+  - mkaccfg -t taskrole -i "name=tr10,parent=hmcsuperadmin,"resources=cec:ChangeCoD+ListCoDInformation+ListCECProperty,lpar:ChangeLPARProperty+ListLPARProperty+CreateProfile""
+  - mkhmcusr -i "name=userman,taskrole=tr10,authentication_type=local,remote_ssh_access=1,remote_webui_access=1,passwd=abcd1234"
+
+custom_user: userman
+custom_user_passwd: abcd1234"

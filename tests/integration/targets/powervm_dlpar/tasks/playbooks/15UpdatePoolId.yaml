@@ -1,0 +1,24 @@
+---
+- name: "TC15 - Update shared processor pool ID on shared processor partition"
+  block:
+    - name: Run powervm_dlpar update_proc_mem updating pool_id
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        proc_settings:
+          pool_id: "{{ pool_id }}"
+        action: update_proc_mem
+      register: result
+
+    - name: Verify task succeeded and partition_info is returned
+      assert:
+        that:
+          - result is success
+          - result.partition_info is defined
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

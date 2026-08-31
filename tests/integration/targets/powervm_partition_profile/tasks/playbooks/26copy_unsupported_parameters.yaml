@@ -1,0 +1,33 @@
+- name: Verify copy fails when unsupported parameters are provided
+  block:
+    - name: Copy partition profile with unsupported processor and memory settings
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_copy_source }}"
+        duplicate_prof_name: "{{ profile_copy_duplicate_new }}"
+        action: copy
+        memory_settings: "{{ memory_settings_ame_explicit }}"
+        processor_settings: "{{ shared_processor_settings_pool }}"
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the copy unsupported-parameters response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify copy unsupported parameter error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'unsupported parameters' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

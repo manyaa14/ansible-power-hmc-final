@@ -1,0 +1,72 @@
+- name: Create VIOS
+  block:
+    - name: Create VIOS
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + 'install' }}"
+        settings:
+          profile_name: "{{ profile_name_install }}"
+          io_slots: "{{ io_slots_install }}"
+        state: present
+      register: testout
+
+    - name:  Stdout the created logical partition
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify that VIOS gets created
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+  
+    - name: Install VIOS
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + 'install' }}"
+        nim_IP: "{{ nim_IP }}"
+        nim_gateway: "{{ nim_gateway }}"
+        vios_IP: "{{ vios_IP }}"
+        nim_subnetmask: "{{ nim_subnetmask }}"
+        timeout: "{{ timeout }}"
+        prof_name: "{{ profile_name_install }}"
+        nim_vlan_priority: "{{ nim_vlan_priority }}"
+        nim_vlan_id: "{{ nim_vlan_id }}"
+        action: install
+      register: testout
+
+    - name: Verify that VIOS gets Installed
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+  
+    - name: Accept the Licence
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + 'install' }}"
+        action: accept_license
+      register: testout
+  
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify that accept license works
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+  

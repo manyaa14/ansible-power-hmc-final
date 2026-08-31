@@ -1,0 +1,26 @@
+---
+- name: Verify error when both state and platform_config are provided together
+  block:
+    - name: Execute platform update with both state=facts and platform_config (invalid combination)
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        state: facts
+        platform_config:
+          system_firmware_update:
+            update_type: Update
+            update_order: 1
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'state' in result.msg or 'platform_config' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

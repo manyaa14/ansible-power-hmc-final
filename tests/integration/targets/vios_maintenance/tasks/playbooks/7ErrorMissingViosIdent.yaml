@@ -1,0 +1,25 @@
+---
+- name: Verify error when no VIOS identifier is provided (state=present)
+  block:
+    - name: Create backup without vios_name, vios_id, or vios_uuid
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ system_name }}"
+          backup_name: "{{ backup_name_ioconfig }}"
+        state: present
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'Missing VIOS details' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

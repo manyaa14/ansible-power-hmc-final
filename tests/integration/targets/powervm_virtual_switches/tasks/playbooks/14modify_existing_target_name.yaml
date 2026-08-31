@@ -1,0 +1,49 @@
+- name: Verify modify rejects renaming to an existing switch name
+  block:
+    - name: Ensure source switch exists for rename conflict test
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        state: present
+      register: setup_source_out
+
+    - name: Ensure existing-target switch exists for rename conflict test
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_existing_target }}"
+        state: present
+      register: setup_target_out
+
+    - name: Rename source switch to an existing switch name
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        new_switch_name: "{{ switch_name_modify_existing_target }}"
+        state: modify
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the rename conflict response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify rename conflict error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'already exists' in testout.msg"
+          - "'Cannot rename to an existing switch name' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

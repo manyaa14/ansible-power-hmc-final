@@ -1,0 +1,66 @@
+- name: 37verifyallkeysinplay - verify all keys in play
+  block:
+    - name: 37verifyallkeysinplay - verify all keys in play
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "{{ os_type_aix }}"
+        mem: "{{ mem }}"
+        max_mem: "{{ max_mem }}"
+        min_mem: "{{ min_mem }}"
+        proc: "{{ proc }}"
+        min_proc: "{{ min_proc }}"
+        max_proc: "{{ max_proc }}"
+        proc_unit: "{{ proc_unit }}"
+        max_proc_unit: "{{ max_proc_unit }}"
+        min_proc_unit: "{{ min_proc_unit }}"
+        state: "{{ state_present }}"
+      register: result
+
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ result }}'
+
+    - assert:
+        that:
+          # - "'{{ system_name }}' in '{{ result['partition_info']['SystemName'] }}'"
+          # - "'{{ mem }}' in '{{ result['partition_info']['CurrentMemory'] }}'"
+          # - "'{{ proc_unit }}' in '{{ result['partition_info']['CurrentProcessingUnits'] }}'"
+          # - "'{{ proc }}' in '{{ result['partition_info']['CurrentProcessors'] }}'"
+          # - "'128' in '{{ result['partition_info']['CurrentUncappedWeight'] }}'"
+          - result.partition_info.SystemName == system_name
+          - result.partition_info.CurrentMemory | string == mem | string
+          - result.partition_info.CurrentProcessingUnits | string == proc_unit | string
+          - result.partition_info.CurrentProcessors | string == proc | string
+          - result.partition_info.CurrentUncappedWeight | string == '128'
+          - result is success
+          - result is changed
+
+    - name: Delete logical partition
+      powervm_lpar_instance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        state: "{{ state_absent }}"
+      register: testout
+
+    - name: Stdout the probed info
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify that lpar gets deleted lpar successfully
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+
+

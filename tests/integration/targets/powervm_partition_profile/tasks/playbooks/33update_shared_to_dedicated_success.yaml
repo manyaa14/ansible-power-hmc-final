@@ -1,0 +1,30 @@
+- name: Verify update succeeds when switching from shared to dedicated with required processor fields
+  block:
+    - name: Update shared partition profile to dedicated with required processor values
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_create_basic }}"
+        state: updated
+        processor_settings: "{{ dedicated_processor_settings_update_2 }}"
+      register: testout
+
+    - name: Stdout the shared-to-dedicated success response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify shared-to-dedicated update succeeds
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'partition profile is updated successfully' in testout.profile_info.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

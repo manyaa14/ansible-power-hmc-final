@@ -1,0 +1,22 @@
+- name: power_on_lpar_start_policy testcases
+  block:
+    - name: Change cec power_on_lpar_start_policy to autostart
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        power_on_lpar_start_policy: "{{ power_on_lpar_start_policy_autostart }}"
+        action: modify_syscfg
+      register: testout
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

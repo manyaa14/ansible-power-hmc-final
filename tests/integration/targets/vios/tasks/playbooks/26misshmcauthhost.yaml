@@ -1,0 +1,25 @@
+- name: Error- when Invalid Parameters are mentioned for accept_license
+  block:
+    - name: Error- when Invalid Parameters are mentioned for accept_license
+      vios:
+        action: accept_license
+      register: testout
+      ignore_errors: yes
+  
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Assert the Error
+      assert:
+        that:
+          - "'missing required arguments: hmc_auth, hmc_host' in testout.msg"
+          - testout is not changed
+          - testout is failed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+  

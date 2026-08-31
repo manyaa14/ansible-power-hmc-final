@@ -1,0 +1,25 @@
+---
+- name: Verify that play reports error when passwd is missing in attributes dictionary for present state
+  block:
+    - name: Verify that play reports error when passwd is missing in attributes dictionary for present state
+      hmc_user:
+        state: present
+        name: "{{ name }}"
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          resourcerole: "{{ resourcerole }}"
+          authentication_type: "{{ authentication_type }}"
+          taskrole: "{{ taskrole }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ status_fail }}"

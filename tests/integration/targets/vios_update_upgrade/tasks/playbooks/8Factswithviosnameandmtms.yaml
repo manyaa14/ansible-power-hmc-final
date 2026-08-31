@@ -1,0 +1,26 @@
+---
+- name: Get vios version using vios_name with MTMS system_name
+  block:
+    - name: Get facts with vios_name and MTMS system_name
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          vios_name: "{{ vios_name }}"
+          system_name: "{{ system_name_mtms }}"
+        state: facts
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

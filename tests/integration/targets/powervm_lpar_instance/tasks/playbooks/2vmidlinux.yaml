@@ -1,0 +1,49 @@
+- name: Create and Delete Linux Logical Partition
+  block:
+    - name: Create Linux logical partition with vm_id
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + '2' }}"
+        os_type: "{{ os_type_linux }}"
+        vm_id: "{{ vm_id }}"
+        state: present
+      register: result
+
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ result }}'
+
+    - assert:
+        that:
+          # - "'{{ vm_id }}' in '{{ result['partition_info']['PartitionID'] }}'"
+          # - "'{{ os_type_linux | replace('l','L')  }}' in '{{ result['partition_info']['PartitionType'] }}'"
+          - result.partition_info.PartitionID | string == vm_id | string
+          - "'Linux' in result.partition_info.PartitionType"
+          - result is success
+          - result is changed
+
+    - name: Delete logical partition
+      powervm_lpar_instance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + '2' }}"
+        state: "{{ state_absent }}"
+      register: testout
+
+    - name: Stdout the probed info
+      debug:
+        msg: '{{ testout }}'
+
+    - assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "FAILED TO CREATE OR DELETE THE LOGICAL PARTITION"
+

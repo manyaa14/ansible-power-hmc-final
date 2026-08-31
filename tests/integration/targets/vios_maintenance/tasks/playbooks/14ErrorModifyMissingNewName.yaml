@@ -1,0 +1,26 @@
+---
+- name: Verify error when new_name is missing for state=modify
+  block:
+    - name: Modify backup file name without providing new_name
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ssp }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          backup_name: "{{ modify_backup_name }}"
+        state: modify
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'new_name' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

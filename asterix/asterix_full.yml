@@ -1,0 +1,490 @@
+---
+- name: Build and Deploy Asterix Emulator
+  hosts: hmcs
+  gather_facts: yes
+  connection: local
+  vars_files:
+    - vars/main.yml
+    - vars/secrets.yml
+
+  vars:
+    vm_ip: "{{ inventory_hostname }}"
+
+  tasks:
+    - name: Verify vHMC is fully operational
+      shell: |
+        sshpass -p "{{ hscroot_password }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o IdentitiesOnly=yes \
+          -o ConnectTimeout=10 \
+          hscroot@{{ vm_ip }} "lshmc -V"
+      register: lshmc_check
+      retries: 5
+      # delay: 10
+      until: lshmc_check.rc == 0
+      changed_when: false
+
+    # CHECK IF OPENCERT IS INSTALLED
+    - name: Test hscpe user login
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o ConnectTimeout=5 \
+          hscpe@{{ vm_ip }} "echo ready"
+      register: hscpe_login_test
+      failed_when: false
+      changed_when: false
+
+    - name: Set OpenCert installation flag
+      set_fact:
+        needs_opencert: "{{ hscpe_login_test.rc != 0 }}"
+
+    # INSTALL OPENCERT IF NEEDED (with retry logic)
+    - name: Install OpenCert via hmc_update_upgrade
+      ibm.power_hmc.hmc_update_upgrade:
+        hmc_host: "{{ vm_ip }}"
+        hmc_auth:
+          username: hscroot
+          password: "{{ hscroot_password }}"
+        build_config:
+          location_type: nfs
+          hostname: "{{ nfs_host }}"
+          mount_location: /HMCReleases
+          build_file: "{{ opencert_path }}"
+        state: updated
+      register: opencert_install
+      when: needs_opencert
+
+    - name: Reboot vHMC after OpenCert installation
+      shell: |
+        sshpass -p "{{ hscroot_password }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscroot@{{ vm_ip }} \
+          "hmcshutdown -t now -r --force"
+      when: needs_opencert
+
+    - name: Wait for reboot to complete
+      pause:
+        seconds: "{{ reboot_wait }}"
+      when: needs_opencert
+
+    - name: Verify hscpe login after OpenCert installation
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o ConnectTimeout=5 \
+          hscpe@{{ vm_ip }} "echo ready"
+      register: hscpe_verify
+      retries: 3
+      delay: 10
+      until: hscpe_verify.rc == 0
+      when: needs_opencert
+      ignore_errors: true
+
+    # If verification failed, reinstall OpenCert one more time
+    - name: Reinstall OpenCert if verification failed
+      when: needs_opencert and hscpe_verify.failed
+      block:
+        - name: Log reinstallation attempt
+          debug:
+            msg: "hscpe verification failed after 3 retries. Reinstalling OpenCert (2nd attempt)..."
+
+        - name: Install OpenCert via hmc_update_upgrade (2nd attempt)
+          ibm.power_hmc.hmc_update_upgrade:
+            hmc_host: "{{ vm_ip }}"
+            hmc_auth:
+              username: hscroot
+              password: "{{ hscroot_password }}"
+            build_config:
+              location_type: nfs
+              hostname: "{{ nfs_host }}"
+              mount_location: /HMCReleases
+              build_file: "{{ opencert_path }}"
+            state: updated
+          register: opencert_install_retry
+
+        - name: Reboot vHMC after OpenCert reinstallation
+          shell: |
+            sshpass -p "{{ hscroot_password }}" ssh \
+              -o StrictHostKeyChecking=no \
+              -o UserKnownHostsFile=/dev/null \
+              -o LogLevel=ERROR \
+              hscroot@{{ vm_ip }} \
+              "hmcshutdown -t now -r --force"
+
+        - name: Wait for reboot to complete (2nd attempt)
+          pause:
+            seconds: "{{ reboot_wait }}"
+
+        - name: Verify hscpe login after OpenCert reinstallation
+          shell: |
+            sshpass -p "{{ hscpe_pass }}" ssh \
+              -o StrictHostKeyChecking=no \
+              -o UserKnownHostsFile=/dev/null \
+              -o ConnectTimeout=5 \
+              hscpe@{{ vm_ip }} "echo ready"
+          register: hscpe_verify_retry
+          retries: 3
+          delay: 10
+          until: hscpe_verify_retry.rc == 0
+
+    # BUILD EMULATOR LOCALLY
+    - name: Check if Asterix repository exists
+      stat:
+        path: "{{ asterix_dir }}"
+      register: repo_stat
+
+    - name: Clone Asterix repository
+      shell: |
+        git clone https://{{ github_username | urlencode }}:{{ github_token }}@github.ibm.com/power-hmc/asterix-emulator.git "{{ asterix_dir }}"
+      when: not repo_stat.stat.exists
+      no_log: true
+
+    - name: Verify Java version
+      command: java -version
+      register: java_version
+      changed_when: false
+
+    - name: Verify Gradle wrapper version
+      command: ./gradlew --version
+      args:
+        chdir: "{{ asterix_dir }}"
+      changed_when: false
+
+    - name: Ensure .gradle directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.gradle"
+        state: directory
+        mode: '0755'
+
+    - name: Configure Gradle credentials
+      copy:
+        content: |
+          ibmUsername={{ artifactory_username }}
+          ibmPassword={{ artifactory_token }}
+          org.gradle.jvmargs=-Xmx1024m
+        dest: "{{ ansible_env.HOME }}/.gradle/gradle.properties"
+        mode: '0600'
+      no_log: true
+
+    - name: Build Asterix emulator
+      command: ./gradlew build
+      args:
+        chdir: "{{ asterix_dir }}"
+
+    - name: Find distribution zip file
+      find:
+        paths: "{{ asterix_dir }}/asterix-core-emulator/build/distributions"
+        patterns: "*.zip"
+      register: zip_files
+
+    - name: Set zip file variables
+      set_fact:
+        zip_file_path: "{{ zip_files.files[0].path }}"
+        folder_name: "{{ zip_files.files[0].path | basename | regex_replace('\\.zip$', '') }}"
+
+    - name: Unzip distribution
+      unarchive:
+        src: "{{ zip_file_path }}"
+        dest: "{{ asterix_dir }}/asterix-core-emulator/build/distributions"
+        remote_src: yes
+
+    - name: Copy BMC emulator JAR
+      copy:
+        src: "{{ asterix_dir }}/asterix-bmc-emulator/build/libs/{{ asterix_bmc_jar }}"
+        dest: "{{ asterix_dir }}/asterix-core-emulator/build/distributions/{{ folder_name }}/{{ asterix_bmc_jar }}"
+        remote_src: yes
+
+    - name: Remove old zip
+      file:
+        path: "{{ zip_file_path }}"
+        state: absent
+
+    - name: Create new zip with BMC emulator
+      archive:
+        path: "{{ asterix_dir }}/asterix-core-emulator/build/distributions/{{ folder_name }}"
+        dest: "{{ zip_file_path }}"
+        format: zip
+
+    # DEPLOY TO VHMC
+    - name: Clean old emulator files on vHMC
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "echo '{{ root_pass }}' | su - -c 'rm -rf /home/hscpe/asterix-core-emulator-* /home/hscpe/asterix-core-emulator*.zip'"
+
+    - name: Copy emulator zip to vHMC
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" scp \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          {{ zip_file_path }} hscpe@{{ vm_ip }}:/home/hscpe/
+
+    - name: Verify emulator ZIP on vHMC
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          'ls -lh /home/hscpe/asterix-core-emulator*.zip'
+      changed_when: false
+
+    - name: Unzip emulator on vHMC
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "cd /home/hscpe && unzip -o asterix-core-emulator*.zip"
+
+    - name: Verify emulator directory on vHMC
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "ls -ld /home/hscpe/asterix-core-emulator-*"
+      changed_when: false
+
+    # ENSURE NO ASTERIX RUNNING
+    - name: Check for existing Asterix processes
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "ps -ef | grep asterix-bmc-emulator | grep -v grep"
+      register: existing_processes
+      failed_when: false
+      changed_when: false
+
+    - name: Kill existing Asterix processes
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "cat > /tmp/kill_asterix.sh << 'EOF'
+        #!/bin/bash
+        echo '{{ root_pass }}' | su - root -c 'pkill -9 -f asterix-bmc-emulator' 2>/dev/null || true
+        EOF
+        chmod +x /tmp/kill_asterix.sh && /tmp/kill_asterix.sh && rm -f /tmp/kill_asterix.sh"
+      when: existing_processes.stdout != ""
+      ignore_errors: true
+
+    - name: Wait after killing processes
+      pause:
+        seconds: 5
+      when: existing_processes.stdout != ""
+
+    - name: Remove stale Asterix profile
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "echo '{{ root_pass }}' | su - -c 'rm -rf /var/hsc/profiles/ACE0001; true'"
+
+    # START ASTERIX
+    - name: Start Asterix emulator
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "echo '{{ root_pass }}' | su - -c 'cd /home/hscpe/asterix-core-emulator-*/ && nohup ./startAsterix.pl {{ vm_ip }} FSP > /tmp/asterix.log 2>&1 &'"
+
+    - name: Wait for Asterix to initialize
+      pause:
+        seconds: 20
+
+    - name: Check if logs folder exists
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "ls /home/hscpe/asterix-core-emulator-*/logs 2>/dev/null"
+      register: logs_check
+      failed_when: false
+      changed_when: false
+
+    - name: Retry starting Asterix if needed
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "echo '{{ root_pass }}' | su - -c 'cd /home/hscpe/asterix-core-emulator-*/ && nohup ./startAsterix.pl {{ vm_ip }} FSP > /tmp/asterix.log 2>&1 &'"
+      when: logs_check.rc != 0
+
+    - name: Wait again if retried
+      pause:
+        seconds: 10
+      when: logs_check.rc != 0
+
+    - name: Recheck if logs folder exists after retry
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "ls /home/hscpe/asterix-core-emulator-*/logs 2>/dev/null"
+      register: logs_check_retry
+      failed_when: false
+      changed_when: false
+      when: logs_check.rc != 0
+
+    - name: Ensure logs folder exists after Asterix start
+      fail:
+        msg: "Asterix logs folder was not created even after retrying startAsterix.pl"
+      when:
+        - logs_check.rc != 0
+        - logs_check_retry.rc != 0
+
+    # VERIFY ASTERIX RUNNING
+    - name: Wait for Asterix to fully start
+      pause:
+        seconds: 30
+
+    - name: Verify Asterix is running
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "ps -ef | grep asterix-bmc-emulator | grep -v grep"
+      register: verify_running
+      failed_when: verify_running.stdout == ""
+      changed_when: false
+
+    # ENSURE SYSTEM DISCONNECTED
+    - name: Check existing managed systems
+      shell: |
+        sshpass -p "{{ hscroot_password }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscroot@{{ vm_ip }} \
+          "lssyscfg -r sys -F name,state,ipaddr"
+      register: existing_systems
+      failed_when: false
+      changed_when: false
+
+    - name: Cleanup existing managed system connection before reconnect
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "echo '{{ root_pass }}' | su - -c '
+            existing_names=\$(lssyscfg -r sys -F name,state,ipaddr | awk -F, '\''(\$1 == \"HV4\" || \$3 == \"{{ vm_ip }}\") {print \$1}'\'');
+            for managed_system in \$existing_names; do
+              chsysstate -m \"\$managed_system\" -r sys -o off >/dev/null 2>&1 || true;
+              rmsysconn -o remove -m \"\$managed_system\" >/dev/null 2>&1 || rmsysconn -o remove --ip {{ vm_ip }} >/dev/null 2>&1 || true;
+            done
+          '"
+      when: existing_systems.stdout != ""
+      failed_when: false
+
+    - name: Wait after cleanup of existing managed system connection
+      pause:
+        seconds: 60
+      when: existing_systems.stdout != ""
+
+    # CONNECT AND POWER ON MANAGED SYSTEM
+    - name: Connect managed system
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "echo -e '{{ root_pass }}\n{{ asterix_root_pass }}' | su - -c '/opt/hsc/bin/mksysconn --ip {{ vm_ip }}'"
+
+    - name: Wait for managed system to appear
+      pause:
+        seconds: 60
+
+    - name: Get managed system state
+      shell: |
+        sshpass -p "{{ hscroot_password }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscroot@{{ vm_ip }} \
+          "lssyscfg -r sys -F name,state"
+      register: system_state
+      retries: 10
+      delay: 10
+      until: system_state.stdout != ""
+      changed_when: false
+
+    - name: Parse managed system lines
+      set_fact:
+        managed_system_lines: "{{ system_state.stdout_lines | select('match', '^HV4,') | list }}"
+
+    - name: Ensure Asterix managed system is connected and not in bad state
+      fail:
+        msg: "Expected managed system HV4 to be connected and healthy before power on, but got: {{ system_state.stdout }}"
+      when:
+        - managed_system_lines | length == 0 or
+          (managed_system_lines[0] is search('Error|Failed|Incomplete|Recovery|No Connection|Unknown'))
+
+    - name: Set managed system name
+      set_fact:
+        system_name: HV4
+
+    - name: Power on managed system if needed
+      ibm.power_hmc.power_system:
+        hmc_host: "{{ vm_ip }}"
+        hmc_auth:
+          username: hscroot
+          password: "{{ hscroot_password }}"
+        system_name: "{{ system_name }}"
+        action: poweron
+      when: managed_system_lines[0] is search('Power Off')
+
+    - name: Wait for power on
+      pause:
+        seconds: 30
+      when: '"Power Off" in system_state.stdout'
+
+    - name: Get final system state
+      shell: |
+        sshpass -p "{{ hscroot_password }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscroot@{{ vm_ip }} \
+          "lssyscfg -r sys -F name,state"
+      register: final_state
+      changed_when: false
+
+    - name: Display completion message
+      debug:
+        msg: |
+          ===== AUTOMATION COMPLETE =====
+          Managed system {{ system_name }} is up at {{ vm_ip }}
+
+# Made with Bob

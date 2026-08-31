@@ -1,0 +1,25 @@
+---
+- name: Verify error when file_list is missing for state=absent
+  block:
+    - name: Remove backup files without providing file_list
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+        state: absent
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'file_list' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

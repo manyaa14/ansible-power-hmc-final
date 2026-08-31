@@ -1,0 +1,28 @@
+- name: Error-when host_name missing for disk update
+  block:
+    - name: Error-when host_name mentioned for diskupdate
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config: 
+          location_type: "{{ config_nfs['location_type'] }}"
+          mount_location: "{{ config_nfs['mount_location'] }}"
+          build_file: "{{ config_ftp['build_file'] }}"
+        state: updated
+      register: updated_hmc_build_info
+      ignore_errors: yes
+
+    - name: Verify the result
+      assert:
+        that:
+        - updated_hmc_build_info is failed
+        - updated_hmc_build_info is not changed
+        - "'ParameterError: mandatory parameter' in updated_hmc_build_info.msg"
+        - "'hostname' in updated_hmc_build_info.msg"
+        - "'is missing' in updated_hmc_build_info.msg"
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

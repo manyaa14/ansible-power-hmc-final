@@ -1,0 +1,40 @@
+- name: Verify create fails when uncapped shared mode is missing uncapped_weight
+  block:
+    - name: Create uncapped shared partition profile without uncapped_weight
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_create_basic }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings:
+          processor_mode: shared
+          minimum_processing_units: 1.0
+          maximum_processing_units: 1.0
+          desired_processing_units: 1.0
+          desired_processors: 1
+          maximum_processors: 1
+          minimum_processors: 1
+          sharing_mode: uncapped
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the missing uncapped weight response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify uncapped_weight error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'uncapped_weight is required when sharing_mode is' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

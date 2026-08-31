@@ -1,0 +1,31 @@
+- name: Verify shared profile creation with shared processor pool succeeds
+  block:
+    - name: Create shared partition profile with shared processor pool
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_pool }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings: "{{ shared_processor_settings_pool }}"
+      register: testout
+
+    - name: Stdout the shared processor pool response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify shared profile with pool is created successfully
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'partition profile is created successfully' in testout.profile_info.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

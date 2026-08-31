@@ -1,0 +1,32 @@
+- name: Verify create fails when expansion factor is out of range
+  block:
+    - name: Create shared partition profile with invalid expansion factor
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_memory_expansion }}"
+        state: present
+        memory_settings: "{{ memory_settings_ame_invalid_expansion }}"
+        processor_settings: "{{ shared_processor_settings_pool }}"
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the invalid expansion factor response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify expansion factor range error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'expansion_factor must be between 1.0 and 10.0' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

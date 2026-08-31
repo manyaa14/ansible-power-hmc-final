@@ -1,0 +1,26 @@
+- name: Verify that specifying ldap_settings reports an error
+  block:
+    - name: Verify that specifying ldap_settings reports an error
+      hmc_user:
+        action: remove_ldap_config
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth_special }}"
+        ldap_settings:
+          basedn: "{{ basedn }}"
+        ldap_resource: searchfilter
+      register: result
+      ignore_errors: yes
+
+    - name: Veriy the Result
+      assert:
+        that:
+          - "'ParameterError: unsupported parameter: ldap_settings' in result.msg"
+          - result is not changed
+          - result is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+
+

@@ -1,0 +1,24 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/vios_alt_root_vg/tasks
+plb_dir: targets/vios_alt_root_vg/tasks/playbooks
+selected_test_platform: asterix
+
+# vios_alt_root_vg module variables
+system_name: HV4
+vios_name: VIOS1
+wrong_vios_name: hmc-zz1-vios12
+wrong_system_name: hmc-zz12
+
+# Target disk variables
+target_disk1: hdisk1
+target_disk2: hdisk2
+target_disk3: hdisk3
+target_disk4: hdisk4
+
+# disk_size_policy choices
+disk_size_policy_minimize: minimize
+disk_size_policy_upper: upper
+disk_size_policy_lower: lower
+disk_size_policy_nearest: nearest

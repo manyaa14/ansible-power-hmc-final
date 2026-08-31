@@ -1,0 +1,28 @@
+---
+- name: Copy rootvg to hdisk2 with force (switching alt_rootvg from hdisk1 to hdisk2)
+  block:
+    - name: Set hdisk2 as alt_rootvg with force=true
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        force: true
+        targets:
+          - "{{ target_disk2 }}"
+        state: copy
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

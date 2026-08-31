@@ -1,0 +1,33 @@
+- name: Error-when min_proc_unit>min_proc
+  block:
+    - name: Error-when min_proc_unit>min_proc
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "{{ os_type_aix }}"
+        mem: "{{ mem }}"
+        max_mem: "{{ max_mem }}"
+        min_mem: "{{ min_mem }}"
+        proc: "{{ proc }}"
+        min_proc: "{{ min_proc_unit }}"
+        proc_unit: "{{ proc_unit }}"
+        min_proc_unit: "{{ min_proc }}"
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify that play throws error
+      assert:
+        that:
+          - "'Minimum number of processing units exceeds minimum number of virtual processors' in result.msg"
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+

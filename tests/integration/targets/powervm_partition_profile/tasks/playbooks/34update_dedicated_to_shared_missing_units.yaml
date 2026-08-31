@@ -1,0 +1,36 @@
+- name: Verify update fails when switching from dedicated to shared without required processing units
+  block:
+    - name: Update dedicated partition profile to shared without shared processing units
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_update_shared }}"
+        state: updated
+        processor_settings:
+          processor_mode: shared
+          desired_processors: 2
+          maximum_processors: 2
+          minimum_processors: 2
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the dedicated-to-shared missing units response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify dedicated-to-shared missing units error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'Missing required processor_settings fields' in testout.msg"
+          - "'minimum_processing_units' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

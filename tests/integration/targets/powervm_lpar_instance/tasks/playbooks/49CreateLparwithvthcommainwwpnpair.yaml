@@ -1,0 +1,33 @@
+- name: Error-having comma in wwpn_pair
+  block:
+    - name: Error-having comma in wwpn_pair
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + 'NPIV' }}"
+        os_type: "{{ os_type_aix }}"
+        max_virtual_slots: "{{ max_virtual_slots }}"
+        npiv_config:
+          - vios_name: "{{ vios_name }}"
+            fc_port: "{{ fc_port }}"
+            wwpn_pair: c0507607577aefdc,c0507607577aefdd
+            client_adapter_id: "{{ client_adapter_id }}"
+            server_adapter_id: "{{ server_adapter_id }}"
+          - vios_name: "{{ vios_name2  }}"
+            fc_port: "{{ fc_port2 }}"
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify play reports a error
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - '"Error: WWPN pair with semicolon delimiter is expected" in result.msg'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

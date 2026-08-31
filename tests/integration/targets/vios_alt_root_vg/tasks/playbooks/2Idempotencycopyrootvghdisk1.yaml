@@ -1,0 +1,25 @@
+---
+- name: Idempotency - copy rootvg to hdisk1 when alt_rootvg already exists on hdisk1 (no force)
+  block:
+    - name: Execute copy to hdisk1 when it is already alt_rootvg (expect failure)
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        targets:
+          - "{{ target_disk1 }}"
+        state: copy
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'alternate disk already exists' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

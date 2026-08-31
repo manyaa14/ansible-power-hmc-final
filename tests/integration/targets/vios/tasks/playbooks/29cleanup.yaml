@@ -1,0 +1,31 @@
+- name: Fetch all the VIOS & Lpars
+  block:
+    - name: Fetch all the VIOS & Lpars
+      hmc_command:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        cmd: lssyscfg -r lpar -F name -m "{{ system_name }}"
+      register: testout
+
+    - name: Print the Lpars & VIOS which starts with Ansible_CT_Vios
+      debug:
+        msg: "{{ testout.command_output | select('regex', '^Ansible_CT_Vios') | list }}"
+    
+    - name: Select the vios names which has starting Ansible_CT_Vios & delete them  
+      hmc_command:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        cmd: rmsyscfg -r lpar -m "{{ system_name }}" -n "{{ item }}"
+      loop: "{{ testout.command_output | select('regex', '^Ansible_CT_Vios') | list }}"
+      register: result
+
+    - name: Stdout the result of above task
+      debug:
+        msg: "{{ result }}"
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+

@@ -1,0 +1,33 @@
+- name: Verify create fails when memory settings are incomplete for AME scenario
+  block:
+    - name: Create partition profile with incomplete memory settings
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_memory_ame_default }}"
+        state: present
+        memory_settings:
+          desired_memory: 1024
+        processor_settings: "{{ shared_processor_settings_pool }}"
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the missing memory-fields response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify missing memory fields error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'Missing required memory_settings fields' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

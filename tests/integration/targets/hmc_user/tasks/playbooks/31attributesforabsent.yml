@@ -1,0 +1,30 @@
+---
+- name: Error attributes for Remove hmc user
+  block:
+    - name: Error attributes for Remove hmc user
+      hmc_user:
+        state: absent
+        hmc_host: "{{ inventory_hostname }}"
+        name: "{{ new_name }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          authentication_type: "{{ authentication_type }}"
+          passwd: "{{ passwd }}"
+          taskrole: "{{ taskrole }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - "'ParameterError: unsupported parameter: attributes' in result.msg"
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"

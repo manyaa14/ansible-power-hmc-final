@@ -1,0 +1,38 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/powervm_dlpar/tasks
+plb_dir: targets/powervm_dlpar/tasks/playbooks
+selected_test_platform: asterix
+
+# powervm_dlpar module variables
+system_name: HV4
+vm_name: Partition-test1
+vm_name_dedicated: Partition-test-2
+vios_name: VIOS1
+
+# proc_settings variables
+proc: 2
+proc_unit: 1
+sharing_mode_uncapped: uncapped
+sharing_mode_capped: capped
+sharing_mode_dedicated: keep_idle_procs
+uncapped_weight: 131
+pool_id: 2
+
+# mem_settings variables
+mem: 3072
+
+# pv_settings variables
+disk_name: hdisk1
+pv_target_name: vtscsi1
+server_adapter_id: 5
+client_adapter_id: 6
+
+# npiv_settings variables
+fc_port_name: fcs0
+wwpn_pair: "c0507607577aefc0;c0507607577aefc1"
+
+# vod_settings variables
+device_name: vopt1
+media_name: media1

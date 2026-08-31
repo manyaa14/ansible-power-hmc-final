@@ -1,0 +1,29 @@
+- name: Error-when min proc mentioned without proc
+  block:
+    - name: Error-when min proc mentioned without proc
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "{{ os_type_aix }}"
+        min_proc: "{{ min_proc }}"
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ result }}'
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - '"{{ error24 }}" in result.msg'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+ 

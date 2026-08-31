@@ -1,0 +1,27 @@
+---
+- name: Verify error when is_quick_evac is missing in partition_migration
+  block:
+    - name: Execute platform update for partition migration without is_quick_evac
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          system_firmware_update:
+            update_type: Update
+            update_order: 1
+          partition_migration:
+            destination_managed_system: "{{ dest_system }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'is_quick_evac' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

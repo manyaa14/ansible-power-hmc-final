@@ -1,0 +1,35 @@
+---
+- name: "TC18 - Error: lpar_name not provided when type is lpm"
+  block:
+    - name: Run create_service_event without lpar_name for types lpm
+      create_service_event:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        description: "Test Description"
+        types: lpm
+        attributes:
+          title: "{{ svc_title }}"
+          severity: "{{ svc_severity }}"
+          contact_name: "{{ svc_contact_name }}"
+          contact_phone: "{{ svc_contact_phone }}"
+          contact_email: "{{ svc_contact_email }}"
+          target_lpar_name: "{{ target_lpar_name }}"
+          target_mtms: "{{ target_mtms }}"
+          service_file:
+            - pedbgq4
+        state: created
+      register: result
+      ignore_errors: true
+
+    - name: Verify task failed with lpar_name mandatory for lpm error
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'lpar_name' in result.msg"
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

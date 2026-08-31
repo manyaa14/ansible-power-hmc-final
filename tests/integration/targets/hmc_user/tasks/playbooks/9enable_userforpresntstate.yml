@@ -1,0 +1,28 @@
+---
+- name: Verify that play reports error when enable_user mentioned in present state
+  block:
+    - name: Verify that play reports error when enable_user mentioned in present state
+      hmc_user:
+        state: present
+        hmc_host: "{{ inventory_hostname }}"
+        name: "{{ name }}"
+        enable_user: "{{ enable_user_true }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          resourcerole: "{{ resourcerole }}"
+          authentication_type: "{{ authentication_type }}"
+          passwd: "{{ passwd }}"
+          taskrole: "{{ taskrole }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - "'ParameterError: unsupported parameter: enable_user' in result.msg"
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ status_fail }}"

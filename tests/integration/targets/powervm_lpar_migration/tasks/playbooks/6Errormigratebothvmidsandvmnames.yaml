@@ -1,0 +1,30 @@
+---
+- name: Verify error when both vm_ids and vm_names are provided (mutually exclusive)
+  block:
+    - name: Migrate with both vm_ids and vm_names provided (expect failure)
+      powervm_lpar_migration:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        src_system: "{{ src_system }}"
+        dest_system: "{{ dest_system }}"
+        vm_names:
+          - "{{ vm_name1 }}"
+        vm_ids:
+          - "{{ vm_id1 }}"
+        shared_proc_pool:
+          - lpar_id: 4
+            pool_id: "{{ pool_id1 }}"
+        action: migrate
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'mutually exclusive' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

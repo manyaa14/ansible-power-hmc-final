@@ -1,0 +1,24 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/vios_secure/tasks
+plb_dir: targets/vios_secure/tasks/playbooks
+selected_test_platform: asterix
+
+# vios_secure module variables
+system_name: HV4
+vios_name: VIOS1
+
+# Security settings
+security_level: high
+security_file: file.rule
+security_rule: lls_maxage
+
+# Firewall config variables
+firewall_port: 8080
+firewall_interface: eth0
+firewall_address: 12345678
+firewall_timeout: 10
+firewall_wrong_port: 8728728
+ip_version_ipv4: ipv4
+ip_version_ipv6: ipv6

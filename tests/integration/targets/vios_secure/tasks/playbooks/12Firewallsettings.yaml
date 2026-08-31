@@ -1,0 +1,32 @@
+---
+- name: Verify configuring firewall settings with all valid parameters
+  block:
+    - name: Configure firewall setting with all valid params
+      vios_secure:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        firewall_config:
+          - port: "{{ firewall_port }}"
+            interface: "{{ firewall_interface }}"
+            remote: true
+            address: "{{ firewall_address }}"
+            timeout: "{{ firewall_timeout }}"
+            present: allow
+        state: setting_firewall
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

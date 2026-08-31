@@ -1,0 +1,25 @@
+---
+- name: Verify error when unsupported parameter user_id is provided for facts state
+  block:
+    - name: Get vios version with unsupported user_id attribute
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          vios_id: "{{ vios_id }}"
+          system_name: "{{ system_name }}"
+          user_id: "{{ sftp_user }}"
+        state: facts
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'unsupported parameter: user_id' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

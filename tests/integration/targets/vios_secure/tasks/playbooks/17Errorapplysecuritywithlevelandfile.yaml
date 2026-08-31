@@ -1,0 +1,25 @@
+---
+- name: Verify error when both level and file are provided for setting_security state
+  block:
+    - name: Apply security with mutually exclusive level and file params
+      vios_secure:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        level: high
+        file: ttt.xl
+        state: setting_security
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'mutually exclusive' in result.msg or 'level' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

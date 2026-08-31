@@ -1,0 +1,50 @@
+- name: Create an Lpar with NPIV
+  block:
+    - name: Create an Lpar with NPIV
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + 'NPIV' }}"
+        os_type: "{{ os_type_aix }}"
+        max_virtual_slots: "{{ max_virtual_slots }}"
+        npiv_config:
+          - vios_name: "{{ vios_name }}"
+            fc_port: "{{ fc_port }}"
+            wwpn_pair: c0507607577aefdc;c0507607577aefdd
+            client_adapter_id: "{{ client_adapter_id }}"
+            server_adapter_id: "{{ server_adapter_id }}"
+          - vios_name: "{{ vios_name2  }}"
+            fc_port: "{{ fc_port2 }}"
+        state: "{{ state_present }}"
+      register: result
+
+    - name: Verify Lpar gets created successfully
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Delete logical partition
+      powervm_lpar_instance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + 'NPIV' }}"
+        state: "{{ state_absent }}"
+      register: testout
+
+    - name: Stdout the probed info
+      debug:
+        msg: '{{ testout }}'
+
+    - assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+ 

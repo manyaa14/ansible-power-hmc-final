@@ -1,0 +1,29 @@
+---
+task_dir: targets/powervm_virtual_switches/tasks
+plb_dir: targets/powervm_virtual_switches/tasks/playbooks
+selected_test_platform: asterix
+
+Status_Fail: "TestCase FAILED"
+
+system_name: HV4
+
+switch_name_facts_existing: vs_facts
+switch_name_facts_missing: vs_missing
+
+switch_name_create_default: vs_create_default
+switch_name_create_mode: vs_create_mode
+switch_name_create_duplicate: vs_create_duplicate
+
+switch_name_modify_source: vs_modify_source
+switch_name_modify_target: vs_modify_target
+switch_name_modify_existing_target: vs_modify_existing
+switch_name_modify_mode_only: vs_modify_mode_only
+
+switch_name_delete_existing: vs_create_mode
+switch_name_delete_missing: vs_delete_missing
+
+switch_mode_veb: Veb
+switch_mode_vepa: Vepa
+switch_mode_invalid: veb
+
+# Made with Bob

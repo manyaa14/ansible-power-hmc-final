@@ -1,0 +1,189 @@
+---
+- name: Deploy vHMC Virtual Machine
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars/main.yml
+    - vars/secrets.yml
+
+  tasks:
+    - name: Fetch available images from OneCloud API
+      uri:
+        url: "{{ api_base_url }}/vm/images"
+        method: GET
+        headers:
+          accept: "application/json"
+          Authorization: "Bearer {{ bearer_token }}"
+        validate_certs: false
+        status_code: 200
+      register: images_response
+
+    - name: Find and validate correct image ID for OS release as per the site selected
+      set_fact:
+        site_id: "{{ {'POK': 1, 'RCH': 4, 'AUS': 3, 'TUC': 2}[site] }}"
+        matching_images: "{{ images_response.json.data | selectattr('os_release', 'equalto', os_release) | selectattr('sites', 'search', ({'POK': 1, 'RCH': 4, 'AUS': 3, 'TUC': 2}[site])|string) | list }}"
+
+    - name: Set image ID or fail if not found
+      set_fact:
+        image_id: "{{ matching_images[0].id }}"
+      failed_when: matching_images | length == 0
+
+    - name: Display selected image
+      debug:
+        msg: "Using image ID {{ image_id }} for OS release {{ os_release }}"
+
+    - name: Deploy vHMC via API
+      uri:
+        url: "{{ api_base_url }}/vm"
+        method: POST
+        headers:
+          accept: "application/json"
+          Authorization: "Bearer {{ bearer_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          virtualMachines:
+            - vmname: "{{ vm_name }}"
+              vmnotes: "Asterix automation"
+          imageID: "{{ image_id }}"
+          resources: "small"
+          projectID: "{{ project_id }}"
+          site: "{{ site }}"
+          groupID: "{{ group_id }}"
+          VLAN: "{{ vlan }}"
+        validate_certs: false
+        status_code: [200, 201, 400]
+      register: vm_deploy_response
+      failed_when: false
+
+    - name: Check for VM name conflict
+      fail:
+        msg: "VM name '{{ vm_name }}' already in use. Please change 'vm_name' in vars/main.yml"
+      when:
+        - vm_deploy_response.status == 400
+        - vm_deploy_response.json.errors is defined
+        - vm_deploy_response.json.errors | selectattr('path', 'search', 'vmname') | list | length > 0
+
+    - name: Check for other deployment errors
+      fail:
+        msg: "VM deployment failed: {{ vm_deploy_response.json.errors | map(attribute='msg') | join(', ') }}"
+      when:
+        - vm_deploy_response.status == 400
+        - vm_deploy_response.json.errors is defined
+
+    - name: Check if deployment started
+      fail:
+        msg: "VM deployment failed"
+      when: vm_deploy_response.json.status != "success"
+
+    - name: Extract VM details
+      set_fact:
+        vm_ip: "{{ vm_deploy_response.json.data.virtualMachines[0].ipaddr }}"
+        vm_id: "{{ vm_deploy_response.json.data.virtualMachines[0].vmID }}"
+
+    - name: Display VM IP
+      debug:
+        msg: "VM IP: {{ vm_ip }}"
+
+    - name: Wait for VM to be ready and get OTP
+      uri:
+        url: "{{ api_base_url }}/vm"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ bearer_token }}"
+        body_format: json
+        body:
+          projectid: "{{ project_id }}"
+        validate_certs: no
+        status_code: 200
+      register: vm_status
+      until: >
+        vm_status.json.status == "success" and
+        ((vm_status.json.data | default([]) | selectattr('network.ipaddr', 'defined') | selectattr('network.ipaddr', 'equalto', vm_ip) | list | length) > 0) and
+        ((vm_status.json.data | default([]) | selectattr('network.ipaddr', 'defined') | selectattr('network.ipaddr', 'equalto', vm_ip) | list | first).state == "on")
+      retries: "{{ (vm_timeout / poll_interval) | int }}"
+      delay: "{{ poll_interval }}"
+      failed_when: >
+        (vm_status.json.status | default('') != 'success') or
+        ((vm_status.json.errors | default([]) | length) > 0) or
+        ((vm_status.json.data | default([]) | selectattr('network.ipaddr', 'defined') | selectattr('network.ipaddr', 'equalto', vm_ip) | list | length) > 0 and
+        ((vm_status.json.data | default([]) | selectattr('network.ipaddr', 'defined') | selectattr('network.ipaddr', 'equalto', vm_ip) | list | first).state in ["error", "failed", "deleted"]))
+
+    - name: Extract OTP from VM status
+      set_fact:
+        otp: "{{ (vm_status.json.data | default([]) | selectattr('network.ipaddr', 'defined') | selectattr('network.ipaddr', 'equalto', vm_ip) | list | first).otp }}"
+
+    - name: Wait for SSH to become available
+      wait_for:
+        host: "{{ vm_ip }}"
+        port: 22
+        delay: 20
+        timeout: 120
+        state: started
+
+    - name: Remove old SSH host key if exists
+      shell: ssh-keygen -R {{ vm_ip }}
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Verify SSH connectivity with hscroot
+      shell: |
+        sshpass -p "{{ otp }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o ConnectTimeout=5 \
+          -o PreferredAuthentications=password \
+          -o PubkeyAuthentication=no \
+          -o NumberOfPasswordPrompts=1 \
+          hscroot@{{ vm_ip }} "echo ready"
+      register: ssh_test
+      retries: 10
+      delay: 10
+      until: ssh_test.rc == 0
+      failed_when: ssh_test.rc != 0
+      changed_when: false
+
+    - name: Display final status
+      debug:
+        msg: "VHMC fully deployed and ready at {{ vm_ip }}"
+
+    - name: Clean up old host_vars files
+      shell: rm -f ./host_vars/*.yml
+      ignore_errors: true
+      changed_when: false
+
+    - name: Create fresh inventory file with only new vHMC
+      copy:
+        content: |
+          [hmcs]
+          {{ vm_ip }}
+
+          [hmcs:vars]
+          ansible_user=hscroot
+        dest: ./inventory
+
+    - name: Check if host_vars directory exists
+      stat:
+        path: ./host_vars
+      register: host_vars_stat
+
+    - name: Create host_vars directory
+      file:
+        path: ./host_vars
+        state: directory
+      when: not host_vars_stat.stat.exists
+
+    - name: Save OTP password for this host
+      copy:
+        content: |
+          ---
+          hscroot_password: "{{ otp }}"
+        dest: "./host_vars/{{ vm_ip }}.yml"
+
+    - name: Display inventory update message
+      debug:
+        msg: |
+          VM {{ vm_ip }} added to inventory
+          Password stored in host_vars/{{ vm_ip }}.yml
+
+# Made with Bob

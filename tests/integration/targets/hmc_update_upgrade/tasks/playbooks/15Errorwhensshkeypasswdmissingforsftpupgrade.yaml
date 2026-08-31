@@ -1,0 +1,34 @@
+- name: Error-when sshkey_file & passwd missing for sftp upgrade
+  block:
+    - name: Error-when sshkey_file & passwd missing for sftp upgrade
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config: 
+          location_type: "{{ config_sftp['location_type'] }}"
+          hostname: "{{ config_sftp['hostname'] }}"
+          build_file: "{{ config_sftp['build_file'] }}"
+          userid: "{{ config_sftp['userid'] }}"
+        state: upgraded
+      register: updated_hmc_build_info
+      ignore_errors: yes
+
+    - name: Stdout the Probed HMC build info after update
+      debug:
+        msg: '{{ updated_hmc_build_info }}'
+
+    - name: Verify the result
+      assert:
+        that:
+          - updated_hmc_build_info is failed
+          - updated_hmc_build_info is not changed
+          - '"ParameterError: mandatory parameter" in updated_hmc_build_info.msg'
+          - "'passwd' in updated_hmc_build_info.msg"
+          - "'sshkey_file' in updated_hmc_build_info.msg"
+          - "'is missing' in updated_hmc_build_info.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

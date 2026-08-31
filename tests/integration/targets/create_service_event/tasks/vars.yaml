@@ -1,0 +1,23 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/create_service_event/tasks
+plb_dir: targets/create_service_event/tasks/playbooks
+selected_test_platform: asterix
+
+# create_service_event module variables
+system_name: HV4
+vios_name: VIOS1
+wrong_system_name: HV5
+wrong_lpar_name: VIOS2
+
+# attributes
+svc_title: test
+svc_severity: 4
+svc_contact_name: Test
+svc_contact_phone: 980980098
+svc_contact_email: test@abc.com
+
+# lpm-specific attributes
+target_lpar_name: Partition-test1
+target_mtms: 8203-E4A*ACE0001

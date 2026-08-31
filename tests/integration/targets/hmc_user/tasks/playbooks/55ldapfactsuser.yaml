@@ -1,0 +1,22 @@
+- name: Retrieve ldapconfig
+  block:
+    - name: Retrieve ldapconfig
+      hmc_user:
+        state: ldap_facts
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        resource: "{{ resource_config }}"
+      register: result
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is not changed
+          - result is success
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+
+

@@ -1,0 +1,24 @@
+---
+- name: Verify error when system_name is missing for platform_update
+  block:
+    - name: Execute platform update without system_name
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        platform_config:
+          system_firmware_update:
+            update_type: Update
+            update_order: 1
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'system_name' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

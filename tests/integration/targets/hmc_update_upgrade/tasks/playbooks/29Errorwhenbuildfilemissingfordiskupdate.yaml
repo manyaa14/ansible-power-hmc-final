@@ -1,0 +1,26 @@
+- name: Error-when build_file missing for disk update
+  block:
+    - name: Error-when sshkey_file,mount_location mentioned for diskupdate
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config: 
+          location_type: "{{ config_disk['location_type'] }}"
+        state: updated
+      register: updated_hmc_build_info
+      ignore_errors: yes
+
+    - name: Verify the result
+      assert:
+        that:
+        - upgraded_hmc_build_info is failed
+        - upgraded_hmc_build_info is not changed
+        - "'ParameterError: mandatory parameter ' in updated_hmc_build_info.msg"
+        - "'build_file' in updated_hmc_build_info.msg"
+        - "'is missing' in updated_hmc_build_info.msg"
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

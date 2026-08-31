@@ -1,0 +1,22 @@
+---
+- name: Verify error when hmc_host and hmc_auth are missing
+  block:
+    - name: Execute platform update without hmc_host and hmc_auth
+      platform_update:
+        system_name: "{{ system_name }}"
+        platform_config:
+          system_firmware_update:
+            update_type: Update
+            update_order: 1
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

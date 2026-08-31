@@ -1,0 +1,28 @@
+---
+- name: Update vios using disk with restart option
+  block:
+    - name: Update using disk repository with restart=true
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          repository: disk
+          vios_id: "{{ vios_id }}"
+          system_name: "{{ system_name_mtms }}"
+          image_name: "{{ image_name }}"
+          restart: true
+        state: updated
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

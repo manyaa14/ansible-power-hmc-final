@@ -1,0 +1,179 @@
+---
+task_dir: targets/powervm_partition_profile/tasks
+plb_dir: targets/powervm_partition_profile/tasks/playbooks
+selected_test_platform: asterix
+
+Status_Fail: "TestCase FAILED"
+
+system_name: "HV4"
+vm_name: "Partition-test"
+
+profile_shared_existing: "existing-pp"
+profile_shared_create_basic: "minimal-shared-pp"
+profile_shared_uncapped: "sree3"
+profile_shared_pool: "sree10"
+profile_dedicated_basic: "minimal-dedicated-pp"
+profile_dedicated_always: "sree12"
+profile_dedicated_inactive: "sree13"
+profile_dedicated_active: "sree14"
+profile_memory_ame_default: "sree17"
+profile_memory_expansion: "sree20"
+profile_copy_source: "existing-pp"
+profile_copy_duplicate: "dup2"
+profile_copy_duplicate_new: "dup1"
+profile_update_shared: "existing-pp"
+
+shared_processor_settings_basic:
+  processor_mode: shared
+  minimum_processing_units: 1.0
+  maximum_processing_units: 1.0
+  desired_processing_units: 1.0
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+
+shared_processor_settings_uncapped:
+  processor_mode: shared
+  minimum_processing_units: 1.0
+  maximum_processing_units: 1.0
+  desired_processing_units: 1.0
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+  sharing_mode: uncapped
+  uncapped_weight: 20
+
+shared_processor_settings_pool:
+  processor_mode: shared
+  minimum_processing_units: 1.0
+  maximum_processing_units: 1.0
+  desired_processing_units: 1.0
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+  sharing_mode: uncapped
+  uncapped_weight: 20
+  shared_processor_pool: 0
+
+dedicated_processor_settings_basic:
+  processor_mode: dedicated
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+
+dedicated_processor_settings_always:
+  processor_mode: dedicated
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+  allow_processor_sharing: always
+
+dedicated_processor_settings_inactive:
+  processor_mode: dedicated
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+  allow_processor_sharing: inactive
+
+dedicated_processor_settings_active:
+  processor_mode: dedicated
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+  allow_processor_sharing: active
+
+memory_settings_basic:
+  desired_memory: 1024
+  maximum_memory: 1024
+  minimum_memory: 1024
+  desired_huge_pagecount: 2
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 2
+
+memory_settings_ame_default:
+  desired_memory: 1024
+  maximum_memory: 1024
+  minimum_memory: 1024
+  desired_huge_pagecount: 2
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 2
+  active_memory_expansion: true
+
+memory_settings_ame_explicit:
+  desired_memory: 1024
+  maximum_memory: 1024
+  minimum_memory: 1024
+  desired_huge_pagecount: 2
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 2
+  active_memory_expansion: true
+  expansion_factor: 10
+
+memory_settings_ame_invalid_expansion:
+  desired_memory: 1024
+  maximum_memory: 1024
+  minimum_memory: 1024
+  desired_huge_pagecount: 2
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 2
+  active_memory_expansion: true
+  expansion_factor: 12
+
+memory_settings_invalid_hardware_ratio:
+  desired_memory: 1024
+  maximum_memory: 1024
+  minimum_memory: 1024
+  desired_huge_pagecount: 2
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 2
+  active_memory_expansion: true
+  expansion_factor: 10
+  hardware_page_tableratio: 10
+
+memory_settings_update_shared_memory:
+  desired_memory: 2048
+  maximum_memory: 2048
+  minimum_memory: 2048
+  desired_huge_pagecount: 2
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 2
+
+memory_settings_update_shared_hugepages:
+  desired_memory: 2048
+  maximum_memory: 2048
+  minimum_memory: 2048
+  desired_huge_pagecount: 1
+  maximum_huge_pagecount: 2
+  minimum_huge_pagecount: 1
+
+shared_processor_settings_all_options:
+  processor_mode: shared
+  minimum_processing_units: 1.0
+  maximum_processing_units: 1.0
+  desired_processing_units: 1.0
+  desired_processors: 1
+  maximum_processors: 1
+  minimum_processors: 1
+  sharing_mode: uncapped
+  uncapped_weight: 20
+  shared_processor_pool: 0
+
+shared_processor_settings_update_processors_2:
+  processor_mode: shared
+  minimum_processing_units: 2.0
+  maximum_processing_units: 4.0
+  desired_processing_units: 2.0
+  desired_processors: 2
+  maximum_processors: 4
+  minimum_processors: 2
+  sharing_mode: uncapped
+  uncapped_weight: 19
+  shared_processor_pool: 0
+
+dedicated_processor_settings_update_2:
+  processor_mode: dedicated
+  desired_processors: 2
+  maximum_processors: 2
+  minimum_processors: 2
+
+# Made with Bob

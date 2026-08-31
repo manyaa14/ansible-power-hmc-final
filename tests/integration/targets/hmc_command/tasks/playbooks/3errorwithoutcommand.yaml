@@ -1,0 +1,20 @@
+---
+- name: Verify that play reports error when cmd option is missing
+  block:
+    - name: Error when cmd key is missing
+      hmc_command:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: testout
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - "'missing required arguments: cmd' in testout.msg"
+          - testout is not changed
+          - testout is failed
+  
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ status_fail }}"

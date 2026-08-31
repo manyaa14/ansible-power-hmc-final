@@ -1,0 +1,39 @@
+- name: List the HMC current build level
+  block:
+    - name: List the HMC current build level
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        state: facts
+      register: build_info
+
+    - name: Stdout the probed HMC build info
+      debug:
+        msg: '{{ build_info }}'
+
+    - name: Update the HMC to the XXXX build level using sftp
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config: '{{ config_sftp }}'
+        state: updated
+      register: updated_hmc_build_info
+
+    - name: Stdout the Probed HMC build info after update
+      debug:
+        msg: '{{ updated_hmc_build_info }}'
+
+    - name: Verify the result
+      assert:
+        that:
+          - updated_hmc_build_info is success
+          - updated_hmc_build_info is changed
+
+  
+  rescue:
+    - name: Mark the Failure
+      debug:
+        msg: "SFTP Update Failed"
+
+ 
+

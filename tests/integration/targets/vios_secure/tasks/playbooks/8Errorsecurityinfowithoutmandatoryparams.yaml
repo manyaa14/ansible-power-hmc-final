@@ -1,0 +1,22 @@
+---
+- name: Verify error when vios_name is missing for setting_security state
+  block:
+    - name: Get security info without vios_name
+      vios_secure:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        state: setting_security
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'vios_name' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,40 @@
+- name: Verify modify fails for a missing virtual switch
+  block:
+    - name: Ensure missing modify switch is absent before test
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        state: absent
+      register: absent_out
+
+    - name: Modify a missing virtual switch
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        new_switch_name: "{{ switch_name_modify_target }}"
+        state: modify
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the missing-switch modify response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify missing virtual switch error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'Virtual switch' in testout.msg"
+          - "'not found' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

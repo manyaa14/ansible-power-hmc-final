@@ -1,0 +1,31 @@
+- name: Verify create returns already exists warning for an existing profile
+  block:
+    - name: Create partition profile using an already existing profile name
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_existing }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings: "{{ shared_processor_settings_basic }}"
+      register: testout
+
+    - name: Stdout the existing profile response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify existing profile warning is reported
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+          - "'already exists' in testout.warning"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

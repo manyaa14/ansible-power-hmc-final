@@ -1,0 +1,34 @@
+<TestSuite>
+    <TestCases>
+       <!-- <TestCase platform="asterix">1createvios.yaml</TestCase>
+       <TestCase platform="asterix">2createviosvthoutsettings.yaml</TestCase>
+       <TestCase platform="asterix">3createvioswithsettings.yaml</TestCase> 
+       <TestCase platform="asterix">4createvios.yaml</TestCase>
+       <TestCase platform="asterix">6createvios.yaml</TestCase>
+       <TestCase platform="asterix">7createvios.yaml</TestCase> -->
+       <TestCase platform="asterix">8createvios.yaml</TestCase>
+       <!-- <TestCase platform="asterix">9createvios.yaml</TestCase>
+       <TestCase platform="asterix">10errorparameters.yaml</TestCase>
+       <TestCase platform="asterix">11parametererror.yaml</TestCase>
+       <TestCase platform="asterix">12invalidparams.yaml</TestCase>
+       <TestCase platform="asterix">13Parametererror.yaml</TestCase>
+       <TestCase platform="asterix">14missingname.yaml</TestCase>
+       <TestCase platform="asterix">15hmcauthhostvmnamemissing.yaml</TestCase>
+       <TestCase platform="asterix">16changed0.yaml</TestCase>
+       <TestCase platform="asterix">17Errorparams.yaml</TestCase>
+       <TestCase platform="asterix">18createandfactsofviosvthcustomuser.yaml</TestCase>
+       <TestCase platform="asterix">19errorinvalidsettingattr.yaml</TestCase> -->
+       <TestCase platform="asterix">20facts.yaml</TestCase>
+       <!-- <TestCase platform="asterix">21ErrorSettingsmentionedforfacts.yaml</TestCase>
+       <TestCase platform="asterix">22settingsforacceptinstallaction.yaml</TestCase>
+       <TestCase platform="asterix">23Errorwhennameviosnamemissing.yaml</TestCase>
+       <TestCase platform="asterix">24Errorloccodevlanid.yaml</TestCase>
+       <TestCase platform="asterix">25errormissnimipgatewayviosip.yaml</TestCase>
+       <TestCase platform="asterix">26misshmcauthhost.yaml</TestCase>
+       <TestCase platform="asterix">27misshmchostauthname.yaml</TestCase>
+       <TestCase platform="asterix">28ErrorAcceptLicense.yaml</TestCase>
+       <TestCase platform="asterix">29cleanup.yaml</TestCase>
+       <TestCase platform="asterix">30settingsforinstall.yaml</TestCase> -->
+       <TestCase platform="asterix">31Installviosacceptlicence.yaml</TestCase>
+    </TestCases>
+</TestSuite>

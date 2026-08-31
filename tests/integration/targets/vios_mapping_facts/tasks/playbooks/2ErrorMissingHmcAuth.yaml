@@ -1,0 +1,23 @@
+---
+- name: "TC2 - Error: missing hmc_auth"
+  block:
+    - name: Run vios_mapping_facts without hmc_auth
+      vios_mapping_facts:
+        hmc_host: "{{ inventory_hostname }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        state: facts
+      register: result
+      ignore_errors: true
+
+    - name: Verify task failed with missing hmc_auth error
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'hmc_auth' in result.msg"
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

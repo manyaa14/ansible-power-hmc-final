@@ -1,0 +1,24 @@
+---
+- name: Verify error when neither targets nor disk_size_policy is provided for copy state
+  block:
+    - name: Copy rootvg without targets or disk_size_policy
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        force: true
+        state: copy
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'disk_size_policy or targets' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

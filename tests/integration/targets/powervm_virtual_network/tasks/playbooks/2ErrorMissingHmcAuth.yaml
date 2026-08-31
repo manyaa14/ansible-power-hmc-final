@@ -1,0 +1,22 @@
+- name: Verify create fails when hmc_auth is missing
+  block:
+    - name: Create virtual network without hmc_auth
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        system_name: "{{ system_name }}"
+        network_name: "{{ network_name_create }}"
+        network_vlan_id: "{{ network_vlan_id }}"
+        switch_name: "{{ switch_name }}"
+        state: present
+      register: testout
+      ignore_errors: true
+
+    - name: Verify missing hmc_auth error is reported
+      assert:
+        that:
+          - testout is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

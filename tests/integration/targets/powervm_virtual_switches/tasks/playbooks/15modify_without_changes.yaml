@@ -1,0 +1,41 @@
+- name: Verify modify reports no changes when target state already matches
+  block:
+    - name: Ensure no-change switch exists with desired mode
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_mode_only }}"
+        virtual_switch_mode: "{{ switch_mode_vepa }}"
+        state: present
+      register: setup_out
+
+    - name: Modify virtual switch with same effective values
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_mode_only }}"
+        virtual_switch_mode: "{{ switch_mode_vepa }}"
+        new_switch_name: "{{ switch_name_modify_mode_only }}"
+        state: modify
+      register: testout
+
+    - name: Stdout the no-change modify response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify no-change modify result
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+          - testout.virtual_switch_info is defined
+          - testout.virtual_switch_info.status == 'no changes needed'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

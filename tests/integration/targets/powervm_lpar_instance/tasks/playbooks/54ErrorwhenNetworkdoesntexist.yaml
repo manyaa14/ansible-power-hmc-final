@@ -1,0 +1,28 @@
+- name: Error when non existing network is mentioned
+  block:
+    - name: Error when non existing network is mentioned
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "{{ os_type_linux }}"    
+        max_virtual_slots: "{{ max_virtual_slots }}"
+        virt_network_config:
+          - network_name: "{{ network_name + 'wrong' }}"
+            slot_number: "{{ slot_number }}"
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Error
+      assert:
+        that:
+          - result is not changed
+          - result is failed
+          - '"Error: Requested Virtual Network: VLAN2-ETHERNET0wrong is not available" in result.msg'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

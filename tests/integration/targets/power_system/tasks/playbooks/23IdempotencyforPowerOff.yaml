@@ -1,0 +1,20 @@
+- name: Verify that play follows Idempotency for Power_Off
+  block:
+    - name: Verify that play follows Idempotency for Power_Off
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        action: "{{ action_poweroff }}"
+      register: result
+    
+    - name: Validate the result
+      assert:
+        that:
+          - result is success
+          - result is not changed
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,26 @@
+---
+- name: Verify error when unsupported parameter user_id is provided for NFS update
+  block:
+    - name: Update vios using NFS with unsupported user_id parameter
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          repository: nfs
+          system_name: "{{ system_name }}"
+          vios_id: "{{ vios_id }}"
+          user_id: "{{ sftp_user }}"
+        state: updated
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'unsupported parameter: user_id' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

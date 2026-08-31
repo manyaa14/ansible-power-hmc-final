@@ -1,0 +1,28 @@
+---
+- name: Verify error when both targets and disk_size_policy are provided for copy state
+  block:
+    - name: Copy rootvg with both targets and disk_size_policy (mutually exclusive)
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        targets:
+          - "{{ target_disk1 }}"
+          - "{{ target_disk2 }}"
+        disk_size_policy: "{{ disk_size_policy_minimize }}"
+        force: true
+        state: copy
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'mutually exclusive' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

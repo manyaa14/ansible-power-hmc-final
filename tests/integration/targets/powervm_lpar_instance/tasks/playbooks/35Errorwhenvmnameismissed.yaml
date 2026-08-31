@@ -1,0 +1,24 @@
+- name: Verify that play throws error when vm_name is missing
+  block:
+    - name: Verify that play throws error when vm_name is missing
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        os_type: "{{ os_type_linux }}"
+        mem: 512
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify that play reports error
+      assert:
+        that:
+          - '"missing required arguments: vm_name" in result.msg'
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

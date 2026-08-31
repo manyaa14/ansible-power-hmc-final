@@ -1,0 +1,33 @@
+- name: Verify create fails when processor_mode is missing
+  block:
+    - name: Create partition profile without processor_mode
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_create_basic }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings:
+          desired_processing_units: 2
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the missing processor_mode response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify missing processor_mode error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'processor_mode is required in processor_settings' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

@@ -1,0 +1,31 @@
+- name: Error when virtual_opti_pool_id, alt_console_slot, alt_restart_device_slot, vnic_adapters, electronic_err_reporting are specified
+  block:
+    - name: Error when virtual_opti_pool_id, alt_console_slot, alt_restart_device_slot, vnic_adapters, electronic_err_reporting are specified
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + '13' }}"
+        settings:
+          virtual_opti_pool_id: "{{ virtual_opti_pool_id }}"
+          alt_console_slot: "{{ alt_console_slot }}"
+          alt_restart_device_slot: "{{ alt_restart_device_slot }}"
+          mem_weight: "{{ mem_weight }}"
+          vnic_adapters: "{{ vnic_adapters }}"
+          electronic_err_reporting: "{{ electronic_err_reporting }}"
+        state: present
+      register: testout
+      ignore_errors: yes
+
+    - name: Verify that VIOS gets created successfully
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'ParameterError: Invalid parameters: virtual_opti_pool_id, alt_console_slot, alt_restart_device_slot, vnic_adapters, electronic_err_reporting' in testout.msg"
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

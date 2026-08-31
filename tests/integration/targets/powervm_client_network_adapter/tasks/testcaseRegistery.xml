@@ -1,0 +1,30 @@
+<TestSuite>
+  <TestCases>
+    <!-- Negative: missing mandatory params -->
+    <TestCase platform="asterix">1ErrorMissingHmcHost.yaml</TestCase>
+    <TestCase platform="asterix">2ErrorMissingHmcAuth.yaml</TestCase>
+    <TestCase platform="asterix">3ErrorMissingSystemName.yaml</TestCase>
+    <TestCase platform="asterix">4ErrorMissingVmNameAndViosName.yaml</TestCase>
+    <TestCase platform="asterix">5ErrorPresentMissingVirtualNetworkName.yaml</TestCase>
+    <!-- Negative: invalid/conflicting params -->
+    <TestCase platform="asterix">6ErrorBothVmNameAndViosName.yaml</TestCase>
+    <TestCase platform="asterix">7ErrorUpdatedMissingAdapterId.yaml</TestCase>
+    <TestCase platform="asterix">8ErrorAbsentMissingAdapterId.yaml</TestCase>
+    <!-- Positive: facts -->
+    <TestCase platform="asterix">9FactsAllAdapters.yaml</TestCase>
+    <TestCase platform="asterix">10FactsFilterByVirtualNetwork.yaml</TestCase>
+    <TestCase platform="asterix">11FactsFilterByAdapterId.yaml</TestCase>
+    <!-- Positive: present -->
+    <TestCase platform="asterix">12CreateCnaOnLpar.yaml</TestCase>
+    <TestCase platform="asterix">13CreateCnaIdempotency.yaml</TestCase>
+    <TestCase platform="asterix">14CreateCnaWithSlotNumber.yaml</TestCase>
+    <!-- Positive: updated -->
+    <TestCase platform="asterix">15UpdateCnaMacAddress.yaml</TestCase>
+    <TestCase platform="asterix">16UpdateCnaQosSettings.yaml</TestCase>
+    <TestCase platform="asterix">17UpdateCnaOsMacRestrictions.yaml</TestCase>
+    <!-- Positive: detach_virtual_network -->
+    <!-- <TestCase platform="asterix">18DetachVirtualNetwork.yaml</TestCase> -->
+    <!-- Positive: absent + cleanup -->
+    <TestCase platform="asterix">19Cleanup.yaml</TestCase>
+  </TestCases>
+</TestSuite>

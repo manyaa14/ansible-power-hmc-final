@@ -1,0 +1,20 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/vios_mapping_facts/tasks
+plb_dir: targets/vios_mapping_facts/tasks/playbooks
+selected_test_platform: asterix
+
+# vios_mapping_facts module variables
+system_name: HV4
+vios_name: VIOS1
+
+# filter variables
+vadapter_vscsi: vhost0
+vadapter_net: ent4
+physloc_vscsi: U8375.42A.ZZ00111-V5-C2
+physloc_net: U8375.42A.ZZ00111-V5-C4-T2
+physloc_net_valid: U8375.42A.ZZ00111-V5-C4-T1
+cpid: 2
+vtd: "1"
+hostname: 10.48.17.17

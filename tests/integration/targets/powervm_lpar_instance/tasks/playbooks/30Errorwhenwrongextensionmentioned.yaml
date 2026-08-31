@@ -1,0 +1,25 @@
+- name: 30Errorwhenwrongextensionmentioned - when we specify wrong extension of IO
+  block:
+    - name: 30Errorwhenwrongextensionmentioned - when we specify wrong extension of IO
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "{{ os_type_aix }}"
+        state: "{{ state_present }}"
+        physical_io: NTX.MM-XYO
+      register: result
+      ignore_errors: yes
+
+    - name: Assert the error
+      assert:
+        that:
+          - result.failed | default(false)
+          - not (result.changed | default(false))
+          - "'Not able to find the matching IO Adapter on the Server' in (result.msg | default(''))"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,33 @@
+---
+- name: Update vios using SFTP with file_list containing multiple files
+  block:
+    - name: Update using SFTP with save, image_name and multiple files in file_list
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          repository: sftp
+          vios_id: "{{ vios_id }}"
+          system_name: "{{ system_name_mtms }}"
+          user_id: "{{ sftp_user }}"
+          host_name: "{{ sftp_host }}"
+          ssh_key_file: "{{ ssh_key_file }}"
+          restart: true
+          save: true
+          image_name: "{{ image_name }}"
+          files: "{{ file_list_multi }}"
+        state: updated
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

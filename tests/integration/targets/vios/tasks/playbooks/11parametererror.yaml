@@ -1,0 +1,29 @@
+- name: Error when s400_restricted_io_mode, powervm_mgmt_capable, migration_disabled, virtual_serial_num mentioned
+  block:
+    - name: Error when s400_restricted_io_mode, powervm_mgmt_capable, migration_disabled, virtual_serial_num mentioned
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + '11' }}"
+        settings:
+          os400_restricted_io_mode: "{{ os400_restricted_io_mode }}"
+          powervm_mgmt_capable: "{{ powervm_mgmt_capable }}"
+          migration_disabled: "{{ migration_disabled }}"
+          virtual_serial_num: "{{ virtual_serial_num }}"
+        state: present
+      register: testout
+      ignore_errors: yes
+
+    - name: Verify that VIOS gets created successfully
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'ParameterError: Invalid parameters: os400_restricted_io_mode, powervm_mgmt_capable, migration_disabled, virtual_serial_num' in testout.msg"
+
+  rescue:
+    - name: Mark the TC as failed
+      debug:
+        msg: "{{ Status_Fail }}"
+

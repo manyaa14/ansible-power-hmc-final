@@ -1,0 +1,27 @@
+---
+- name: "TC9 - Error: update_proc_mem dedicated partition with capped sharing mode"
+  block:
+    - name: Run powervm_dlpar with dedicated partition and capped sharing mode
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name_dedicated }}"
+        proc_settings:
+          proc: "{{ proc }}"
+          sharing_mode: "{{ sharing_mode_capped }}"
+        action: update_proc_mem
+      register: result
+      ignore_errors: true
+
+    - name: Verify task failed - capped sharing mode not supported with dedicated processor
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'sharing mode is not supported with dedicated' in result.msg"
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

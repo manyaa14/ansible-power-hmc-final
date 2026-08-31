@@ -1,0 +1,29 @@
+---
+- name: "TC29 - Attach FC port to partition via update_npiv"
+  block:
+    - name: Run powervm_dlpar update_npiv to attach FC port
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        npiv_settings:
+          - vios_name: "{{ vios_name }}"
+            fc_port_name: "{{ fc_port_name }}"
+            wwpn_pair: "{{ wwpn_pair }}"
+            server_adapter_id: "{{ server_adapter_id }}"
+            client_adapter_id: "{{ client_adapter_id }}"
+        action: update_npiv
+      register: result
+
+    - name: Verify task succeeded
+      assert:
+        that:
+          - result is success
+          - result is changed
+          - result.partition_info is defined
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,27 @@
+---
+- name: Clean hdisk1 when both hdisk1 and hdisk2 are alt_rootvg
+  block:
+    - name: Clean only hdisk1 from alt_rootvg when hdisk1 and hdisk2 are both alt_rootvg
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        targets:
+          - "{{ target_disk1 }}"
+        state: clean
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

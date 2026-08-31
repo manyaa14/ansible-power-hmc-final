@@ -1,0 +1,125 @@
+---
+status_fail: FAILED
+
+task_dir: targets/hmc_user/tasks
+plb_dir: targets/hmc_user/tasks/playbooks 
+
+#Below Variables are used for hmc_users module
+#Variables for state=present
+name: "Ansible_Localuser"
+name2: "Ansible_Localuser2"
+resourcerole: "AllSystemResources"
+taskrole: "hmcsuperadmin"
+description: "User For AnsibleTesting"
+passwd: "abcd1234"
+pwage: 9
+min_pwage: 8
+session_timeout: 180
+verify_timeout: 140
+idle_timeout: 65
+remote_webui_access: 1
+remote_ssh_access: 1
+remote_user_name: Cla@AUSTIN.IBM.COM
+authentication_type: local
+authentication_type_kerberos: kerberos
+authentication_type_ldap: ldap
+inactivity_expiration: 70
+kerberosusername: "hmckerberos"
+ldapusername: "ldapuser1"
+
+#variables for state=updated
+new_name: AnsibleTest1
+new_taskrole: hmcoperator
+description: AnsibleTest UnderProgress
+newpasswd: abcde12345
+new_pwage: 18
+new_min_pwage: 17
+new_session_timeout: 185
+new_verify_timeout: 145
+new_idle_timeout: 70
+new_remote_webui_access: 0
+new_remote_ssh_access: 0
+new_remote_user_name: Cla@AUSTIN.IBM.COM
+enable_user_true: True
+enable_user_false: False
+max_webui_login_attempts: 25
+webui_login_suspend_time: 45
+new_session_timeout: 85
+new_idle_timeout: 25
+new_max_webui_login_attempts: 40
+new_session_timeout: 100
+
+type_all: all
+type_ldap: ldap
+type_automanage: automanage
+type_kerberos: kerberos
+type_local: local
+type_user: user
+type_default: default
+
+# Local Users
+localusers:
+  - Ansible_CT_1
+  - Ansible_CT_2
+  - Ansible_CT_3
+  - Ansible_CT_4
+  - Ansible_CT_5
+
+# Kerberos Users
+kerberosusers:
+  - Ansible_CT_Kerberos_1
+  - Ansible_CT_Kerberos_2
+  - Ansible_CT_Kerberos_3
+  - Ansible_CT_Kerberos_4
+  - Ansible_CT_Kerberos_5
+
+# LDAP Users List
+ldapusers:
+  - Ansible_CT_Ldap_1
+  - Ansible_CT_Ldap_2
+  - Ansible_CT_Ldap_3
+  - Ansible_CT_Ldap_4
+  - Ansible_CT_Ldap_5
+
+
+resource_user: user
+resource_config: config
+ldap_resource_bindpw: bindpw
+curr_hmc_auth_special:
+  username: Ansible_CT_SpecialChars
+  password: "abc~!@#$%"
+
+primary: ldaps://9.3.40.147
+binddn: cn=Administrator,dc=in,dc=ibm,dc=com
+basedn: ou=People,dc=in,dc=ibm,dc=com
+bindpw: ldap12345
+automanage: 0
+backup: ldap://ldap2.example.com
+timelimit: 40
+username: Ansible_CT_SpecialChars
+specialcharpassword: "abc~!@#$%"
+bindtimelimit: 40
+hmcauthnameattribute: userPrincipalName
+searchfilter: mail=*@yourcompany.com
+scope: sub
+referrals: 0
+starttls: 1
+automanage_1: 1
+hmcgroups: group1,group2,group3
+tlsreqcert: allow
+groupattribute: group1,group2
+memberattribute: member
+authsearch: base
+hmcgroups: group1,group2,group3
+tlsreqcert: allow
+groupattribute: group1,group2
+memberattribute: member
+hmcauthnameattribute: userPrincipalName
+hmcgroups: group1,group2,group3
+tlsreqcert: allow
+loginattribute: notesshortname
+
+
+ldap_commands:
+- chhmcldap -o r -r ldap
+- chhmcldap -o s --primary ldap://9.126.171.146 --basedn cn=IBM,dc=testldap,dc=com --binddn cn=admin,dc=testldap,dc=com --bindpw abcd1234 --loginattribute uid --hmcuserpropsattribute description --automanage 1 --starttls 1 --groupattribute groupOfNames --memberattribute member

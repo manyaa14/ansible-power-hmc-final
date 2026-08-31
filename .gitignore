@@ -1,0 +1,34 @@
+# =============================================================================
+# Runtime-generated files — written by deploy_and_setup.sh at execution time.
+# These contain real IPs and passwords and must never be committed.
+# =============================================================================
+
+# vHMC inventory — written by deploy_vm.yml at runtime
+asterix/inventory
+
+# Per-host password files — written by deploy_vm.yml at runtime
+asterix/host_vars/
+
+# Integration test config — written by deploy_and_setup.sh at runtime
+tests/integration/integration_config.yml
+
+# Test logs and HTML reports — generated during test runs
+tests/integration/*.log
+tests/integration/*.html
+tests/integration/shareable_test_reports/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Vim swap files
+*.swp
+*.swo
+
+tests/integration/setup/pass.yaml
+tests/integration/setup/inventory_nfs
+tests/integration/setup/secret_vars.yaml

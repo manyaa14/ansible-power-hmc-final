@@ -1,0 +1,28 @@
+- name: Create virtual network with switch_name untagged
+  block:
+    - name: Create virtual network using switch_name with tagged_network false
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        network_name: "{{ network_name_create }}"
+        network_vlan_id: "{{ network_vlan_id }}"
+        switch_name: "{{ switch_name }}"
+        tagged_network: "{{ tagged_network }}"
+        state: present
+      register: testout
+
+    - name: Stdout the create response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify virtual network is created
+      assert:
+        that:
+          - testout is changed
+          - testout is success
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,20 @@
+---
+- name: Verify error when facts state is executed without hmc_host
+  block:
+    - name: Execute platform update facts state without hmc_host
+      platform_update:
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        state: facts
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

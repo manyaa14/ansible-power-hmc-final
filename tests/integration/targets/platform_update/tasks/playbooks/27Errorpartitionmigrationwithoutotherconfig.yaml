@@ -1,0 +1,25 @@
+---
+- name: Verify error when partition_migration is provided without system_firmware_update or vios_update
+  block:
+    - name: Execute platform update with only partition_migration (not allowed alone)
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          partition_migration:
+            is_quick_evac: true
+            destination_managed_system: "{{ dest_system }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'partition_migration' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

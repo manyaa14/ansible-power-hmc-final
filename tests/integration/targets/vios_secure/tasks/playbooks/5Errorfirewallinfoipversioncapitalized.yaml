@@ -1,0 +1,24 @@
+---
+- name: Verify error when capitalized ip_version IPV6 is provided for firewall_facts state
+  block:
+    - name: Get firewall info with capitalized ip_version IPV6
+      vios_secure:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        ip_version: IPV6
+        state: firewall_facts
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'ip_version' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

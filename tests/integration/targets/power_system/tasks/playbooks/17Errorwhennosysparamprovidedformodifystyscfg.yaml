@@ -1,0 +1,23 @@
+- name: Verify that play reports error when we don't specify new_name,power_off_policy ,power_on_lpar_start_policy for action modify_syscfg
+  block:
+    - name: error when we don't specify new_name,power_off_policy ,power_on_lpar_start_policy for action modify_syscfg
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        action: "{{ action_modify_syscfg }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is not changed
+          - result is failed
+          - '"Atleast one of the System change configuration should to be provided" in result.msg'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

@@ -1,0 +1,28 @@
+- name: Verify create fails when virtual switch name is missing
+  block:
+    - name: Create virtual switch without required switch name
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        state: present
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the missing-name response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify missing switch name error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'state is present but all of the following are missing: virtual_switch_name' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

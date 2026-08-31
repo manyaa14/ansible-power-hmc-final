@@ -1,0 +1,47 @@
+<TestSuite>
+	<TestCases>
+		<TestCase platform="asterix">1vmidaix.yml</TestCase>
+		<TestCase platform="asterix">2vmidlinux.yaml</TestCase>
+		<TestCase platform="asterix">3vmidaixlinux.yml</TestCase>
+                <TestCase platform="asterix">4vmidibmi.yaml</TestCase>
+                <TestCase platform="asterix">5novmid.yaml</TestCase>
+		<TestCase platform="asterix">6maxvirtslots.yaml</TestCase>
+		<TestCase platform="cec">7vnidgreatthanmaxslot.yaml</TestCase>
+                <TestCase platform="cec">8maxslotequals1.yml</TestCase>
+                <TestCase platform="asterix">9createlparwithproc.yaml</TestCase>
+                <TestCase platform="asterix">10createlparwithminmaxproc.yaml</TestCase>
+                <TestCase platform="asterix">11createlparwithprocproc_unit.yaml</TestCase>
+		<TestCase platform="asterix">12createlparwithprocmaxproc.yaml</TestCase>
+		<TestCase platform="asterix">13createlparwithprocminproc.yaml</TestCase>
+		<!-- <TestCase platform="asterix">14cretelparwithprocunitmaxprocunitproc.yaml</TestCase>
+		<TestCase platform="asterix">15createlparwithprocunitmaxprocunit.yaml</TestCase> -->
+                <TestCase platform="asterix">16Errorwhenprocuitwithoutprocmentioned.yaml</TestCase>
+                <TestCase platform="asterix">17Createlparwithweight.yaml</TestCase>
+		<TestCase platform="asterix">18createlparwithuncappedweightweight.yaml</TestCase>
+		<TestCase platform="asterix">19createlparwithproccompatibilitymode.yaml</TestCase>
+		<TestCase platform="asterix">20createlparwithdefaultproccompatibility.yaml</TestCase>
+		<TestCase platform="asterix">21Errorwhenmaxmemwithoutmem.yaml</TestCase>
+		<TestCase platform="asterix">22Errorwhenmimmemwithoutmem.yaml</TestCase>
+	        <TestCase platform="asterix">23Errorwhenminprocmentionedwithoutproc.yaml</TestCase>
+		<TestCase platform="asterix">24Errorwhenmaxprocmentionedproc.yaml</TestCase>
+		<TestCase platform="asterix">25Errorwhenmaxprocunitmentionedwithoutprocunit.yaml</TestCase>
+		<TestCase platform="asterix">26Errorwhenminprocunitmentionedwithoutprocunit.yaml</TestCase>
+		<TestCase platform="asterix">27Errorwhenminmaxprocmentionedwithoutproc.yaml</TestCase>
+		<TestCase platform="asterix">28createlparwithmem.yaml</TestCase>
+		<TestCase platform="cec">29createlparwithphysicalio.yaml</TestCase>
+		<TestCase platform="asterix">30Errorwhenwrongextensionmentioned.yaml</TestCase>
+		<TestCase platform="asterix">31LparwithmultipleIOs.yaml</TestCase>
+                <TestCase platform="asterix">32createlparwithspecialcharsinvmname.yaml</TestCase>
+                <TestCase platform="asterix">33whenmemlessthan1024withoutminmem.yaml</TestCase>
+                 <TestCase platform="asterix">34playthroewserrorwhenostypeisinvaliod.yaml</TestCase>
+                <TestCase platform="asterix">35Errorwhenvmnameismissed.yaml</TestCase> 
+                <TestCase platform="asterix">36Errorostypesystemnamearemissing.yaml</TestCase>
+                <TestCase platform="asterix">38Errorwhenmaxprocunitgreaterthanmaxproc.yaml</TestCase>
+                <TestCase platform="asterix">39Errorwhenmin_proc_unitgreatthanmin_proc.yaml</TestCase>
+		<TestCase platform="asterix">40whenminprocunitnotspecifiedprocunitlessthan0.1.yaml</TestCase>
+		<TestCase platform="cec">55SingleScsiWithVtdName.yaml</TestCase>
+		<TestCase platform="cec">56MultipleScsiWithVtdName.yaml</TestCase>
+		<TestCase platform="cec">57SingleScsiWithoutVtdName.yaml</TestCase>
+		<TestCase platform="cec">58MixedScsiWithAndWithoutVtdName.yaml</TestCase>
+	</TestCases>
+</TestSuite>

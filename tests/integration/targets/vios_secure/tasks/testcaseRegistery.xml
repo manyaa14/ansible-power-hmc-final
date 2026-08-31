@@ -1,0 +1,27 @@
+<TestSuite>
+    <TestCases>
+        <!-- firewall_info group -->
+        <TestCase platform="asterix">1Errorfirewallinfowihtoutviosname.yaml</TestCase>
+        <TestCase platform="cec">2Firewallinfowithallmandatoryinfo.yaml</TestCase>
+        <TestCase platform="asterix">3Errorfirewallinfowithunsupportedparams.yaml</TestCase>
+        <TestCase platform="asterix">4Errorfirewallinfowithinvalidipversion.yaml</TestCase>
+        <TestCase platform="asterix">5Errorfirewallinfoipversioncapitalized.yaml</TestCase>
+        <TestCase platform="cec">6Firewallinfoipv6.yaml</TestCase>
+        <!-- Security Info group -->
+        <TestCase platform="asterix">7Securityinfo.yaml</TestCase>
+        <TestCase platform="asterix">8Errorsecurityinfowithoutmandatoryparams.yaml</TestCase>
+        <!-- Firewall_settings group -->
+        <TestCase platform="asterix">9Errorfirewallsettingwithoutport.yaml</TestCase>
+        <TestCase platform="asterix">10Errorfirewallsettinginvalidpresentvalue.yaml</TestCase>
+        <TestCase platform="cec">11Errorfirewallsettingcapitalizedpresent.yaml</TestCase>
+        <TestCase platform="cec">12Firewallsettings.yaml</TestCase>
+        <TestCase platform="asterix">13Firewallsettingswithwrongport.yaml</TestCase>
+        <TestCase platform="cec">14Firewallsettingswithportandpresentonly.yaml</TestCase>
+        <TestCase platform="asterix">15Errorfirewallsettingwithoutpresent.yaml</TestCase>
+        <!-- Apply_security group -->
+        <TestCase platform="asterix">16Errorapplysecuritywithunsupportedparams.yaml</TestCase>
+        <TestCase platform="asterix">17Errorapplysecuritywithlevelandfile.yaml</TestCase>
+        <TestCase platform="cec">18Applysecuritywithlevel.yaml</TestCase>
+        <TestCase platform="cec">19Applysecuritywithfile.yaml</TestCase>
+    </TestCases>
+</TestSuite>

@@ -1,0 +1,27 @@
+---
+- name: Copy rootvg using disk_size_policy upper
+  block:
+    - name: Copy rootvg with disk_size_policy upper and force=true
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        disk_size_policy: "{{ disk_size_policy_upper }}"
+        force: true
+        state: copy
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

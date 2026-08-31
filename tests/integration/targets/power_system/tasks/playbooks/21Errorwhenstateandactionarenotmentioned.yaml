@@ -1,0 +1,22 @@
+- name: Verify that commenting both state & action reports error
+  block:
+    - name: Verify that commenting both state & action reports error
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is not changed
+          - result is failed
+          - '"one of the following is required: state, action" in result.msg'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

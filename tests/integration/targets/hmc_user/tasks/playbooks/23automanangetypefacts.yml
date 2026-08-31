@@ -1,0 +1,27 @@
+---
+- name: Error with type as automanage for facts state
+  block:
+    - name: Error with type as automanage for facts state
+      hmc_user:
+        state: facts
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ type_automanage }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - "'ParameterError: facts state will not support type: automanage' in result.msg"
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+

@@ -1,0 +1,33 @@
+- name: Verify update fails when switching from shared to dedicated without required processor fields
+  block:
+    - name: Update shared partition profile to dedicated without dedicated processor values
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_update_shared }}"
+        state: updated
+        processor_settings:
+          processor_mode: dedicated
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the shared-to-dedicated missing processors response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify shared-to-dedicated missing processor fields error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'Missing required processor_settings fields' in testout.msg"
+          - "'minimum_processors' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

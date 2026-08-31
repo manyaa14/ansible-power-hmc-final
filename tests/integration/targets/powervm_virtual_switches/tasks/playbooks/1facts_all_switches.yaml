@@ -1,0 +1,29 @@
+- name: Get all virtual switch facts
+  block:
+    - name: Get all virtual switch facts
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        state: facts
+      register: testout
+
+    - name: Stdout the virtual switch facts
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify all virtual switch facts are returned
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+          - testout.virtual_switch_info is defined
+          - testout.virtual_switch_info.virtual_switches is defined
+          - testout.virtual_switch_info.virtual_switches | length >= 1
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

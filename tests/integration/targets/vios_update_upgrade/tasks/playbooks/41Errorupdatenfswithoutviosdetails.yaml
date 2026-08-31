@@ -1,0 +1,23 @@
+---
+- name: Verify error when vios details are missing for NFS update
+  block:
+    - name: Update vios using NFS without vios_id or vios_name
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          repository: nfs
+        state: updated
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'Missing VIOS details' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

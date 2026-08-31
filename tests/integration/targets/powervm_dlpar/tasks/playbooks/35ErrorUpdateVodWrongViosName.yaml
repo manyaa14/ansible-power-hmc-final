@@ -1,0 +1,27 @@
+---
+- name: "TC35 - Error: update_vod with wrong vios_name"
+  block:
+    - name: Run powervm_dlpar update_vod with invalid vios name
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        vod_settings:
+          - vios_name: "InvalidViosXYZ"
+            device_name: "{{ device_name }}"
+        action: update_vod
+      register: result
+      ignore_errors: true
+
+    - name: Verify task failed with VIOS not found error
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'VIOS not found' in result.msg or 'not found' in result.msg or 'RMC' in result.msg"
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

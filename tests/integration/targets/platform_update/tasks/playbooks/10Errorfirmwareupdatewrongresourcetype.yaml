@@ -1,0 +1,26 @@
+---
+- name: Verify error when wrong repository value is provided in system_firmware_update
+  block:
+    - name: Execute platform update for system firmware with invalid repository
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          system_firmware_update:
+            update_type: Update
+            update_order: 1
+            repository: FTPServer
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'repository' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

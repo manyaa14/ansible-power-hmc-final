@@ -1,0 +1,29 @@
+---
+- name: "TC36 - Attach virtual optical device to partition via update_vod"
+  block:
+    - name: Run powervm_dlpar update_vod to attach virtual optical device
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        vod_settings:
+          - vios_name: "{{ vios_name }}"
+            device_name: "{{ device_name }}"
+            media_name: "{{ media_name }}"
+            server_adapter_id: "{{ server_adapter_id }}"
+            client_adapter_id: "{{ client_adapter_id }}"
+        action: update_vod
+      register: result
+
+    - name: Verify task succeeded
+      assert:
+        that:
+          - result is success
+          - result is changed
+          - result.partition_info is defined
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

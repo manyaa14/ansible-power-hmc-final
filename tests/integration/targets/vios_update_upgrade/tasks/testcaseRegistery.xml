@@ -1,0 +1,64 @@
+<TestSuite>
+    <TestCases>
+        <!-- FACTS group -->
+        <TestCase platform="asterix">1Errorfactswithoutviosdetails.yaml</TestCase>
+        <TestCase platform="asterix">2Errorfactsunsupportedparamuserid.yaml</TestCase>
+        <TestCase platform="asterix">3Errorfactsmissingsystemname.yaml</TestCase>
+        <TestCase platform="cec">4Factswithviosid.yaml</TestCase>
+        <TestCase platform="cec">5Factswithviosname.yaml</TestCase>
+        <TestCase platform="asterix">6Errorfactsvioidandviosnamebothprovided.yaml</TestCase>
+        <TestCase platform="cec">7Factswithviosidandmtms.yaml</TestCase>
+        <TestCase platform="cec">8Factswithviosnameandmtms.yaml</TestCase>
+        <!-- UPDATE WITH DISK group -->
+        <TestCase platform="asterix">9Errorupdatediskwithoutviosdetails.yaml</TestCase>
+        <TestCase platform="asterix">10Errorupdatediskmissingrepository.yaml</TestCase>
+        <TestCase platform="asterix">11Errorupdatediskmissingimagename.yaml</TestCase>
+        <TestCase platform="cec">12Updatediskwithviosid.yaml</TestCase>
+        <TestCase platform="cec">13Updatediskwithviosname.yaml</TestCase>
+        <TestCase platform="cec">14Updatediskwithviosnameandmtms.yaml</TestCase>
+        <TestCase platform="cec">1Updatediskwithviosidandmtms.yaml</TestCase>
+        <TestCase platform="cec">16Updatediskwithrestartoption.yaml</TestCase>
+        <TestCase platform="asterix">17Errorupdatediskunsupportedparamdisks.yaml</TestCase>
+        <!-- UPDATE WITH IBMWEBSITE group -->
+        <TestCase platform="asterix">18Errorupdateibmwebsitewithoutviosdetails.yaml</TestCase>
+        <TestCase platform="asterix">19Errorupdateibmwebsitemissingrepository.yaml</TestCase>
+        <TestCase platform="asterix">20Errorupdateibmwebsitemissingimagename.yaml</TestCase>
+        <TestCase platform="cec">21Updateibmwebsitewithviosid.yaml</TestCase>
+        <TestCase platform="cec">22Updateibmwebsitewithviosname.yaml</TestCase>
+        <TestCase platform="cec">23Updateibmwebsitewithviosnameandmtms.yaml</TestCase>
+        <TestCase platform="cec">24Updateibmwebsitewithviosidandmtms.yaml</TestCase>
+        <TestCase platform="cec">25Updateibmwebsitewithrestart.yaml</TestCase>
+        <TestCase platform="cec">26Updateibmwebsitewithrestartsave.yaml</TestCase>
+        <!-- UPDATE WITH SFTP group -->
+        <TestCase platform="asterix">27Errorupdatesftpwithoutviosdetails.yaml</TestCase>
+        <TestCase platform="asterix">28Errorupdatesftpmissingrepository.yaml</TestCase>
+        <TestCase platform="asterix">29Errorupdatesftpmissinguserid.yaml</TestCase>
+        <TestCase platform="asterix">30Errorupdatesftpmissinghostname.yaml</TestCase>
+        <TestCase platform="cec">31Updatesftpwithviosidandpassword.yaml</TestCase>
+        <TestCase platform="cec">32Updatesftpwithviosnameandsshkey.yaml</TestCase>
+        <TestCase platform="cec">33Updatesftpwithviosnameandmtms.yaml</TestCase>
+        <TestCase platform="cec">34Updatesftpwithviosidandmtms.yaml</TestCase>
+        <TestCase platform="cec">35Updatesftpwithrestart.yaml</TestCase>
+        <TestCase platform="cec">36Errorupdatesftpimagenamewithoutsave.yaml</TestCase>
+        <TestCase platform="cec">37Errorupdatesftpsavewithoutimagename.yaml</TestCase>
+        <TestCase platform="cec">38Updatesftpwithsaveandimagename.yaml</TestCase>
+        <TestCase platform="cec">39Updatesftpwithfilelist1file.yaml</TestCase>
+        <TestCase platform="cec">40Updatesftpwithfilelistmultiplefiles.yaml</TestCase>
+        <!-- UPDATE WITH NFS group -->
+        <TestCase platform="asterix">41Errorupdatenfswithoutviosdetails.yaml</TestCase>
+        <TestCase platform="asterix">42Errorupdatenfsrepositoryandsystemnamemissing.yaml</TestCase>
+        <TestCase platform="asterix">43Errorupdatenfsunsuportedparamuserid.yaml</TestCase>
+        <TestCase platform="asterix">44Errorupdatenfsmissinghostname.yaml</TestCase>
+        <TestCase platform="asterix">45Errorupdatenfsmissingmountloc.yaml</TestCase>
+        <TestCase platform="cec">46Updatenfsswithviosid.yaml</TestCase>
+        <TestCase platform="cec">47Updatenfsswithviosname.yaml</TestCase>
+        <TestCase platform="cec">48Updatenfsswithviosnameandmtms.yaml</TestCase>
+        <TestCase platform="cec">49Updatenfsswithviosidandmtms.yaml</TestCase>
+        <TestCase platform="cec">50Updatenfsswithrestart.yaml</TestCase>
+        <TestCase platform="cec">51Errorupdatenfsssavewithoutimagename.yaml</TestCase>
+        <TestCase platform="cec">52Updatenfsswithsaveandimagename.yaml</TestCase>
+        <TestCase platform="cec">53Updatenfsswithsaveimagenameoptiondirectory.yaml</TestCase>
+        <TestCase platform="cec">54Updatenfsswithfilelistoptiondirectory.yaml</TestCase>
+        <TestCase platform="asterix">55Errorupdatenfssinvalidoptionvalue.yaml</TestCase>
+    </TestCases>
+</TestSuite>

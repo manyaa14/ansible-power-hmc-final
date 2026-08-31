@@ -1,0 +1,37 @@
+- name: Modify Managed System Name
+  block:
+    - name: Change CEC name
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        new_name: "{{ new_name }}"
+        system_name: "{{ system_name }}"
+        action: modify_syscfg
+      register: result
+
+    - name: Verify the result
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Change CEC name
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        new_name: "{{ system_name }}"
+        system_name: "{{ new_name }}"
+        action: modify_syscfg
+      register: result
+
+    - name: Verify the result
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

@@ -1,0 +1,28 @@
+---
+- name: Update vios using NFS with vios_name
+  block:
+    - name: Update using NFS with vios_name, host_name and mount_loc
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          repository: nfs
+          system_name: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          host_name: "{{ nfs_host }}"
+          mount_loc: "{{ mount_loc }}"
+        state: updated
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

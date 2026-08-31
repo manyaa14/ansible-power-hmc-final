@@ -1,0 +1,34 @@
+---
+- name: Modify hmc user
+  block:
+    - name: Modify hmc user
+      hmc_user:
+        state: updated
+        hmc_host: "{{ inventory_hostname }}"
+        name: "{{ name }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          new_name: "{{ new_name }}"
+          passwd: "{{ passwd }}"
+          current_passwd: "{{ newpasswd }}"
+          pwage: "{{ pwage }}"
+          min_pwage: "{{ new_pwage }}"
+          idle_timeout: "{{ new_idle_timeout }}"
+          session_timeout: "{{ session_timeout }}"
+          taskrole: "{{ taskrole }}"
+      register: result
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - name: Verify result
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"

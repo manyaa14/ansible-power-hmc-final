@@ -1,0 +1,26 @@
+---
+- name: Verify error when cleaning hdisk1 and hdisk3 where only hdisk1 is alt_rootvg
+  block:
+    - name: Clean hdisk1 and hdisk3 where hdisk3 is not an alt_rootvg (expect failure)
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vios_name: "{{ vios_name }}"
+        targets:
+          - "{{ target_disk1 }}"
+          - "{{ target_disk3 }}"
+        state: clean
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'not an alternate install rootvg' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

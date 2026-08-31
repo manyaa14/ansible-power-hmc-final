@@ -1,0 +1,47 @@
+- name: 31LparwithmultipleIOs - create lpar with multiple IOs
+  block:
+    - name: 31LparwithmultipleIOs - create lpar with multiple IOs
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "{{ os_type_aix }}"
+        physical_io: "{{ physical_ios }}"
+        state: "{{ state_present }}"
+      register: result
+
+    - name: Stdout the created logical partition
+      debug:
+        msg: '{{ result }}'
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Delete logical partition
+      powervm_lpar_instance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        state: "{{ state_absent }}"
+      register: testout
+
+    - name: Stdout the probed info
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify that lpar gets created lpar successfully
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+

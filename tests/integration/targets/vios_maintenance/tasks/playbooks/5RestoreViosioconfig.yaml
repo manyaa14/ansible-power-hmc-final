@@ -1,0 +1,29 @@
+---
+- name: Restore a VIOS from a viosioconfig backup file
+  block:
+    - name: Restore viosioconfig backup
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ restore_types }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          backup_name: "{{ restore_backup_name }}"
+          restart: "{{ restart_vios }}"
+        state: restore
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

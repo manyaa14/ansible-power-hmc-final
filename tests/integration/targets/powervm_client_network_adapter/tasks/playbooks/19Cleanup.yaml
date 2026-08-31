@@ -1,0 +1,21 @@
+- name: Cleanup all CNAs created during test run
+  block:
+    - name: Delete CNA by adapter id (virtual_ethernet_adapter_id_create)
+      powervm_client_network_adapter:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        virtual_ethernet_adapter_id: "{{ virtual_ethernet_adapter_id_create }}"
+        state: absent
+      register: testout_cleanup
+      ignore_errors: true
+
+    - name: Debug cleanup output
+      debug:
+        msg: "Cleanup complete: {{ testout_cleanup }}"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

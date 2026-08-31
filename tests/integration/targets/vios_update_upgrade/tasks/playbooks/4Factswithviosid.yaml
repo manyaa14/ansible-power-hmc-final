@@ -1,0 +1,26 @@
+---
+- name: Get vios version using vios_id
+  block:
+    - name: Get facts with vios_id and system_name
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          vios_id: "{{ vios_id }}"
+          system_name: "{{ system_name }}"
+        state: facts
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

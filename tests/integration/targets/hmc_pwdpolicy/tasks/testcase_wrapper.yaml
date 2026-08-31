@@ -1,0 +1,15 @@
+- name: Log testcase start marker
+  debug:
+    msg: >-
+      TESTCASE_START|module=hmc_pwdpolicy|playbook={{ testcase_item.TestCase }}|id={{ testcase_item.TestCase | regex_replace('\.[^.]+$', '') }}
+
+- name: Include testcase playbook
+  include_tasks: '{{ plb_dir }}/{{ testcase_item.TestCase }}'
+  ignore_errors: true
+
+- name: Log testcase end marker
+  debug:
+    msg: >-
+      TESTCASE_END|module=hmc_pwdpolicy|playbook={{ testcase_item.TestCase }}|id={{ testcase_item.TestCase | regex_replace('\.[^.]+$', '') }}
+
+# Made with Bob

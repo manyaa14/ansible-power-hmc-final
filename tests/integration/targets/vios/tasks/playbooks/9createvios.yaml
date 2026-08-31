@@ -1,0 +1,30 @@
+- name: Create Virtual IO Server
+  block:
+    - name: Create Virtual IO Server
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + '9' }}"
+        settings:
+          work_group_id: "{{ work_group_id }}"
+          redundant_err_path_reporting: "{{ redundant_err_path_reporting }}"
+          lpar_proc_compat_mode: "{{ lpar_proc_compat_mode }}"
+      #      sriov_eth_logical_ports: "{{ sriov_eth_logical_ports }}"
+        state: present
+      register: testout
+
+    - name: Stdout the created VIOS details
+      debug:
+        msg: '{{ testout }}'
+  
+    - name: Verify that VIOS gets created successfully
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

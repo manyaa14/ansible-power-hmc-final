@@ -1,0 +1,54 @@
+---
+# HMC OS Release version to deploy
+# Available versions can be found in OneCloud portal
+os_release: "V11R1M1110"
+
+# Name for the virtual HMC instance
+vm_name: "test-asterix"
+
+# NFS server hostname for HMC drivers
+nfs_host: "hmc-driver.rch.tadn.ibm.com"
+
+# Path to OpenCert ISO file on the NFS server
+# OpenCert creates the 'hscpe' user required for Asterix deployment
+opencert_path: "/OpenCert/HMC-11-1-OpenCert.iso"
+
+# OneCloud API base URL for VM provisioning
+api_base_url: "https://portal.onecloud.wdc.app.cirrus.ibm.com/api/v3"
+
+# OneCloud project ID for your team/project
+project_id: 165
+
+# Deployment site location (e.g., RCH = Rochester)
+site: "RCH"
+
+# OneCloud group ID for resource allocation(Input 7 for phmc; 1 for onceloud system)
+group_id: 7
+
+# VLAN ID for network configuration
+vlan: 3901
+
+# GitHub repository URL for Asterix emulator source code
+asterix_repo: "https://github.ibm.com/power-hmc/asterix-emulator.git"
+
+# Absolute path to the cloned Asterix repository.
+# Using playbook_dir ensures the clone and the gradle build both resolve to
+# the same location (asterix/asterix-emulator/) regardless of where
+# ansible-playbook is invoked from.
+asterix_dir: "{{ playbook_dir }}/asterix-emulator"
+
+# Name of the BMC emulator JAR file after Gradle build
+asterix_bmc_jar: "asterix-bmc-emulator-0.0.1-SNAPSHOT.jar"
+
+# =============================================================================
+# TIMING CONFIGURATION - NO NEED TO ADJUST THESE VALUES
+# =============================================================================
+
+# Maximum time (seconds) to wait for VM deployment to complete
+vm_timeout: 1000
+
+# Interval (seconds) between polling checks for VM status
+poll_interval: 30
+
+# Time (seconds) to wait after rebooting vHMC (allows services to initialize)
+reboot_wait: 300

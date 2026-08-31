@@ -1,0 +1,30 @@
+---
+- name: Modify user attributes
+  block:
+    - name: Modify user attributes
+      hmc_user:
+        state: updated
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ type_automanage }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          session_timeout: "{{ session_timeout }}"
+          idle_timeout: "{{ idle_timeout }}"
+          max_webui_login_attempts: "{{ max_webui_login_attempts }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - "'ParameterError: updated state will not support type: automanage' in result.msg"
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"

@@ -1,0 +1,35 @@
+- name: Error when we specify name,lpar_env,suspend_capable,simplified_remote_restart_capable,remote_restart_capable & rs_device_name
+  block:
+    - name: Error when we specify name,lpar_env,suspend_capable,simplified_remote_restart_capable,remote_restart_capable & rs_device_name
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{  name + '10' }}"
+        settings:
+          name: "{{  name }}"
+          lpar_env: "{{ lpar_env }}"
+          suspend_capable: "{{ suspend_capable }}"
+          simplified_remote_restart_capable: "{{ simplified_remote_restart_capable }}"
+          remote_restart_capable: "{{ remote_restart_capable }}"
+          rs_device_name: "{{ rs_device_name }}"
+        state: present
+      register: testout
+      ignore_errors: yes
+
+    - name: Stdout the created VIOS details
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify that play reports error when we pass name,lpar_env,suspend_capable,simplified_remote_restart_capable,remote_restart_capable & rs_device_name
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'ParameterError: Invalid parameters: name, lpar_env, suspend_capable, simplified_remote_restart_capable, remote_restart_capable, rs_device_name' in testout.msg" 
+
+  rescue:
+    - name: Mark the TC as Failed
+      debug:
+        msg: "{{ Status_Fail }}"
+

@@ -1,0 +1,34 @@
+---
+- name: "TC15 - Error: invalid severity value (out of choices 1-4)"
+  block:
+    - name: Run create_service_event with invalid severity value
+      create_service_event:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        description: "Test Description"
+        types: vios
+        attributes:
+          title: "{{ svc_title }}"
+          severity: 44
+          contact_name: "{{ svc_contact_name }}"
+          contact_phone: "{{ svc_contact_phone }}"
+          contact_email: "{{ svc_contact_email }}"
+          lpar_name: "{{ vios_name }}"
+          service_file:
+            - pedbgq4
+        state: created
+      register: result
+      ignore_errors: true
+
+    - name: Verify task failed with invalid severity value error
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'severity' in result.msg"
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

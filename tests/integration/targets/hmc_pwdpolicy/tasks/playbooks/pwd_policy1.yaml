@@ -1,0 +1,192 @@
+---
+- name: HMC Password Policy Tests
+  block:
+    - name: Create a password policy
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: dummy
+        policy_config:
+          min_pwage: "2"
+          pwage: "150"
+          min_length: "10"
+          hist_size: "9"
+          warn_pwage: "10"
+          min_digits: "2"
+          min_uppercase_chars: "2"
+          min_lowercase_chars: "3"
+          min_special_chars: "1"
+        state: present
+      register: result
+
+    - name: Create a password policy
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Activate the Password Policy
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: dummy
+        state: activated
+      register: result
+
+    - name: Activate the Password Policy
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Fetch password policy details
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_type: status
+        state: facts
+      register: result
+
+    - name: Fetch password policy details
+      assert:
+        that:
+          - result is success
+
+    - name: Deactivate the password policies
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        state: deactivated
+      register: result
+
+    - name: Deactivate the password policies
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Modify a password policy
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: dummy
+        policy_config:
+          min_pwage: "3"
+          pwage: "160"
+          min_length: "12"
+          hist_size: "10"
+          warn_pwage: "13"
+          min_digits: "3"
+          min_uppercase_chars: "4"
+          min_lowercase_chars: "5"
+          min_special_chars: "3"
+        state: modified
+      register: result
+
+    - name: Modify a password policy
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Delete password policy
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: dummy
+        state: absent
+      register: result
+
+    - name: Delete password policy
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Error-Delete the HMC Medium Security Password Policy
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: HMC Medium Security Password Policy
+        state: absent
+      register: result
+      ignore_errors: yes
+
+    - name: Error-Delete the HMC Medium Security Password Policy
+      assert:
+        that:
+          - "'HMC Medium Security Password Policy' in result.msg"
+          - "'is predefined and cannot be removed' in result.msg"
+          - result is failed
+          - result is not changed
+
+    - name: Error-Activate the policy that is not existing 
+      hmc_pwdpolicy: 
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: AnsibleIntegrationTest
+        state: activated
+      register: result
+      ignore_errors: yes
+
+    - name: Error-Activate the policy that is not existing
+      assert:
+        that:
+          - "'given policy does not exist' in result.msg"
+          - result is failed
+          - result is not changed
+
+    - name: Error-Modify the policy that is not existing
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: AnsibleIntegrationTest
+        policy_config:
+          min_pwage: "2"
+          pwage: "150"
+          min_length: "10"
+          hist_size: "9"
+        state: modified
+      register: result
+      ignore_errors: yes
+
+    - name: Error-Modify the policy that is not existing
+      assert:
+        that:
+          - "'given policy does not exist' in result.msg"
+          - result is failed
+          - result is not changed
+
+    - name: Error-Delete the policy that is not existing
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_name: AnsibleIntegrationTest
+        state: absent
+      register: result
+
+    - name: Error-Delete the policy that is not existing
+      assert:
+        that:
+          - result is not changed
+
+    - name: Error-Play reports error when policy_type is specified other than status/policies 
+      hmc_pwdpolicy:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        policy_type: AnsibleIntegrationTest
+        state: facts
+      register: result
+      ignore_errors: yes
+
+    - name: Error-Play reports error when policy_type is specified other than status/policies
+      assert:
+        that:
+        - "'value of policy_type must be one of: policies, status, got: AnsibleIntegrationTest' in result.msg"
+        - result is failed
+        - result is not changed
+
+  rescue:
+    - name: Mark the Testcases as FAILED
+      debug:
+        msg: "{{ status_fail }}"

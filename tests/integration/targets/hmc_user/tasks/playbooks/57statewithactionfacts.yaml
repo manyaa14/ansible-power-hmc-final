@@ -1,0 +1,25 @@
+- name: Error when state is mentioned with facts
+  block:
+    - name: Error when state is mentioned with facts
+      hmc_user:
+        state: ldap_facts
+        action: remove_ldap_config
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        resource: "{{ resource_user }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - "'parameters are mutually exclusive: state|action' in result.msg"
+          - result is not changed
+          - result is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+
+

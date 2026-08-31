@@ -1,0 +1,48 @@
+<TestSuite>
+    <TestCases>
+        <!-- update_proc_mem error cases -->
+        <TestCase platform="asterix">1ErrorUpdateProcMemMissingSystemName.yaml</TestCase>
+        <TestCase platform="asterix">2ErrorUpdateProcMemMissingVmName.yaml</TestCase>
+        <TestCase platform="asterix">3ErrorUpdateProcMemUnsupportedPvSettings.yaml</TestCase>
+        <TestCase platform="asterix">4ErrorUpdateProcMemUnsupportedNpivSettings.yaml</TestCase>
+        <TestCase platform="asterix">5ErrorUpdateProcMemUnsupportedVodSettings.yaml</TestCase>
+        <TestCase platform="asterix">6ErrorUpdateProcMemWrongSystemName.yaml</TestCase>
+        <TestCase platform="asterix">7ErrorUpdateProcMemWrongVmName.yaml</TestCase>
+        <TestCase platform="asterix">8ErrorUpdateProcMemDedicatedWithProcUnit.yaml</TestCase>
+        <TestCase platform="asterix">9ErrorUpdateProcMemDedicatedWithCappedMode.yaml</TestCase>
+        <TestCase platform="asterix">10ErrorUpdateProcMemSharedWithDedicatedMode.yaml</TestCase>
+        <!-- update_proc_mem positive cases -->
+        <TestCase platform="asterix">11UpdateProcMem.yaml</TestCase>
+        <TestCase platform="asterix">12UpdateProcOnly.yaml</TestCase>
+        <TestCase platform="asterix">13UpdateMemOnly.yaml</TestCase>
+        <TestCase platform="asterix">14UpdateSharingMode.yaml</TestCase>
+        <TestCase platform="asterix">15UpdatePoolId.yaml</TestCase>
+        <!-- update_pv error cases -->
+        <TestCase platform="asterix">16ErrorUpdatePvMissingPvSettings.yaml</TestCase>
+        <TestCase platform="asterix">17ErrorUpdatePvMissingSystemName.yaml</TestCase>
+        <TestCase platform="asterix">18ErrorUpdatePvMissingVmName.yaml</TestCase>
+        <TestCase platform="asterix">19ErrorUpdatePvUnsupportedProcSettings.yaml</TestCase>
+        <TestCase platform="asterix">20ErrorUpdatePvUnsupportedMemSettings.yaml</TestCase>
+        <TestCase platform="asterix">21ErrorUpdatePvWrongViosName.yaml</TestCase>
+        <!-- update_pv positive case -->
+        <TestCase platform="cec">22UpdatePv.yaml</TestCase>
+        <!-- update_npiv error cases -->
+        <TestCase platform="asterix">23ErrorUpdateNpivMissingNpivSettings.yaml</TestCase>
+        <TestCase platform="asterix">24ErrorUpdateNpivMissingSystemName.yaml</TestCase>
+        <TestCase platform="asterix">25ErrorUpdateNpivMissingVmName.yaml</TestCase>
+        <TestCase platform="asterix">26ErrorUpdateNpivUnsupportedProcSettings.yaml</TestCase>
+        <TestCase platform="asterix">27ErrorUpdateNpivUnsupportedMemSettings.yaml</TestCase>
+        <TestCase platform="asterix">28ErrorUpdateNpivWrongViosName.yaml</TestCase>
+        <!-- update_npiv positive case -->
+        <TestCase platform="cec">29UpdateNpiv.yaml</TestCase>
+        <!-- update_vod error cases -->
+        <TestCase platform="asterix">30ErrorUpdateVodMissingVodSettings.yaml</TestCase>
+        <TestCase platform="asterix">31ErrorUpdateVodMissingSystemName.yaml</TestCase>
+        <TestCase platform="asterix">32ErrorUpdateVodMissingVmName.yaml</TestCase>
+        <TestCase platform="asterix">33ErrorUpdateVodUnsupportedProcSettings.yaml</TestCase>
+        <TestCase platform="asterix">34ErrorUpdateVodUnsupportedMemSettings.yaml</TestCase>
+        <TestCase platform="asterix">35ErrorUpdateVodWrongViosName.yaml</TestCase>
+        <!-- update_vod positive case -->
+        <TestCase platform="cec">36UpdateVod.yaml</TestCase>
+    </TestCases>
+</TestSuite>

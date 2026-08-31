@@ -1,0 +1,28 @@
+- name: Verify that play reports error when unsupported parameters are passed for poweroff
+  block:
+    - name: Verify that play reports error when unsupported parameters are passed for poweroff
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        new_name: "{{ new_name }}"
+        power_off_policy: "{{ power_off_policy_1 }}"
+        power_on_lpar_start_policy: "{{ power_on_lpar_start_policy_userinit }}"
+        mem_mirroring_mode: "{{ mem_mirroring_mode_sys_firmware_only }}"
+        pend_mem_region_size: "{{ pend_mem_region_size }}"
+        action: "{{ action_poweroff }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Validate the result
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - '"ParameterError: unsupported parameters: new_name, power_off_policy, power_on_lpar_start_policy, mem_mirroring_mode, pend_mem_region_size" in result.msg'
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

@@ -1,0 +1,20 @@
+- name: Verify delete fails when network_name is missing
+  block:
+    - name: Delete virtual network without network_name
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        state: absent
+      register: testout
+      ignore_errors: true
+
+    - name: Verify missing network_name error is reported
+      assert:
+        that:
+          - testout is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

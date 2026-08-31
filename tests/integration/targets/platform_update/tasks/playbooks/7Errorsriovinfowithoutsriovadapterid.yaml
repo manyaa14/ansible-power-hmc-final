@@ -1,0 +1,27 @@
+---
+- name: Verify error when sriov_adapter_update is provided without adapter_id or all
+  block:
+    - name: Execute platform update with sriov info missing adapter_id and all
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          system_firmware_update:
+            update_type: NoUpdate
+            update_order: 1
+            sriov_adapter_update:
+              - subtype: DriverOnly
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'adapter_id' in result.msg or 'all' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

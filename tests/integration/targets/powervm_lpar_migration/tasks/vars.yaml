@@ -1,0 +1,30 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/powervm_lpar_migration/tasks
+plb_dir: targets/powervm_lpar_migration/tasks/playbooks
+selected_test_platform: asterix
+
+# powervm_lpar_migration module variables
+src_system: HV4
+dest_system: f109a
+
+# Single partition - vm_names
+vm_name1: Partition-test1
+vm_name2: lpar2
+
+# Single partition - vm_ids
+vm_id1: "4"
+vm_id2: "8"
+vm_id3: "6"
+vm_id4: "7"
+
+# Shared processor pool names
+pool_name1: SharedPool03
+pool_name2: SharedPool04
+
+# Shared processor pool IDs
+pool_id1: 3
+pool_id2: 4
+pool_id3: 5
+pool_id4: 6

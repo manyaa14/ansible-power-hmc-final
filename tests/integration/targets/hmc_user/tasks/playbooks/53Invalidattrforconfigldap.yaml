@@ -1,0 +1,34 @@
+- name: reports error when attributes,enable_user,resource,ldap_resource,name,type for ldap_config
+  block:
+    - name: reports error when attributes,enable_user,resource,ldap_resource,name,type for ldap_config
+      hmc_user:
+        action: configure_ldap
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        enable_user: True
+        resource: "{{ resource_user }}"
+        name: "{{ name }}"
+        ldap_resource: "{{ ldap_resource_bindpw }}"
+        type: automanage
+        attributes:
+          taskrole: "{{ taskrole }}"
+        ldap_settings:
+          primary: "{{ primary }}"
+          binddn: "{{ binddn }}"
+          basedn: "{{ basedn }}"
+          bindpw: "{{ bindpw }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the result
+      assert:
+        that:
+          - result is not changed
+          - result is failed
+          - "'ParameterError: unsupported parameters: attributes,enable_user,resource,ldap_resource,name,type' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+

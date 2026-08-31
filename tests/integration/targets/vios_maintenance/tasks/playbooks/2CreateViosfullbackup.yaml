@@ -1,0 +1,31 @@
+---
+- name: Create a full VIOS backup with optional NIMOL, media repository and volume group structure
+  block:
+    - name: Create full vios backup file
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_full }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          backup_name: "{{ backup_name_full }}"
+          nimol_resource: "{{ nimol_resource }}"
+          media_repository: "{{ media_repository }}"
+          volume_group_structure: "{{ volume_group_structure }}"
+        state: present
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

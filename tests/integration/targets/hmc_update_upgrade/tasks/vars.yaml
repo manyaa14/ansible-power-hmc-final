@@ -1,0 +1,65 @@
+Status_Fail: "TestCase FAILED"
+
+hmc_ip1: 10.5.4.61
+
+task_dir: targets/hmc_update_upgrade/tasks
+plb_dir: targets/hmc_update_upgrade/tasks/playbooks
+
+config_nfs:
+  location_type: nfs
+  hostname: hmc-driver.rch.tadn.ibm.com
+  mount_location: /HMCReleases
+  build_file: /Images/HMC11.2.1120.0/2606091530/x86_64/HMC-11.2.1120.0-2606091530-x86_64.iso
+config_ftp:
+  location_type: ftp
+  hostname: 9.3.40.147
+  userid: hmcct
+  passwd: abcd1234
+  build_file: /home/hmcct/AnsibleImages/AutomationImagesFVTR/MF70046-10.1.1020.0-2206300707-x86_64.iso
+config_sftp:
+  location_type: sftp
+  hostname: 9.3.40.147
+  userid: hmcct
+  passwd: abcd1234
+  build_file: /home/hmcct/AnsibleImages/AutomationImagesFVTR/MF70119-10.1.1020.1-2207082150-x86_64.iso  
+config_sftp_ssh:
+  location_type: sftp
+  hostname: 9.3.40.147
+  userid: hmcct
+  sshkey_file: /home/hscroot/my_key.pub
+  build_file: OpenCert/HMC-10-2-OpenCert.iso
+config_disk:
+  location_type: disk
+  build_file: /home/kavya/Ansibleimages/1022.2
+config_nfs_upgrade:
+  location_type: nfs
+  hostname: 9.3.147.72
+  mount_location: /HMCImages
+  build_file: HMC10.2.1030.0/2211152246/x86_64/network_install
+config_ftp_upgrade:
+  location_type: ftp
+  hostname: 9.3.40.147
+  userid: hmcct
+  passwd: abcd1234
+  build_file: /home/hmcct/AnsibleImages/AutomationImagesFVTR/1050/network_install
+config_sftp_upgrade:
+  location_type: sftp
+  hostname: 9.3.40.147
+  userid: hmcct
+  passwd: abcd1234
+  build_file: /home/hmcct/AnsibleImages/AutomationImagesFVTR/1030
+config_disk_upgrade:
+  location_type: disk
+  build_file: /home/kavya/Ansibleimages/1050/network_install
+config_sftp_ssh:
+  location_type: sftp
+  hostname: 9.3.40.147
+  userid: hmcct
+  sshkey_file: /home/hscroot/my_key.pub
+  build_file: /home/hmcct/AnsibleImages/AutomationImagesFVTR/1030
+
+
+
+
+
+

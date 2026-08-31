@@ -1,0 +1,29 @@
+- name: Verify facts rejects unsupported parameters
+  block:
+    - name: Verify facts rejects unsupported virtual switch mode
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_mode: "{{ switch_mode_veb }}"
+        state: facts
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the unsupported parameter response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify unsupported parameter error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'unsupported parameter: virtual_switch_mode' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

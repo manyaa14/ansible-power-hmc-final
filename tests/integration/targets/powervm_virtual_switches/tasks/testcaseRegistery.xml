@@ -1,0 +1,25 @@
+<TestSuite>
+  <TestCases>
+    <TestCase platform="asterix">1facts_all_switches.yaml</TestCase>
+    <TestCase platform="asterix">2facts_specific_switch.yaml</TestCase>
+    <TestCase platform="asterix">3facts_missing_switch.yaml</TestCase>
+    <TestCase platform="asterix">4facts_unsupported_parameter.yaml</TestCase>
+    <TestCase platform="asterix">5present_create_default_mode.yaml</TestCase>
+    <TestCase platform="asterix">6present_create_with_mode.yaml</TestCase>
+    <TestCase platform="asterix">7present_existing_switch.yaml</TestCase>
+    <TestCase platform="asterix">8present_missing_switch_name.yaml</TestCase>
+    <TestCase platform="asterix">9present_unsupported_new_switch_name.yaml</TestCase>
+    <TestCase platform="asterix">10modify_switch_name.yaml</TestCase>
+    <TestCase platform="asterix">11modify_switch_mode.yaml</TestCase>
+    <TestCase platform="asterix">12modify_name_and_mode.yaml</TestCase>
+    <TestCase platform="asterix">13modify_missing_switch.yaml</TestCase>
+    <TestCase platform="asterix">14modify_existing_target_name.yaml</TestCase>
+    <TestCase platform="asterix">15modify_without_changes.yaml</TestCase>
+    <TestCase platform="asterix">16modify_without_parameters.yaml</TestCase>
+    <TestCase platform="asterix">17absent_delete_existing.yaml</TestCase>
+    <TestCase platform="asterix">18absent_delete_missing.yaml</TestCase>
+    <TestCase platform="asterix">19absent_unsupported_parameter.yaml</TestCase>
+  </TestCases>
+</TestSuite>
+
+<!-- Made with Bob -->

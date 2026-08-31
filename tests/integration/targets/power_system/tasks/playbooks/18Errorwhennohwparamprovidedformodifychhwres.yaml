@@ -1,0 +1,23 @@
+- name: Verify that play reports error when we don't specify  pend_mem_region_size,mem_mirroring_mode,requested_num_sys_huge_pages for action modify_hwres
+  block:
+    - name: error when we don't specify  pend_mem_region_size,mem_mirroring_mode,requested_num_sys_huge_pages for action modify_hwres
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        action: "{{ action_modify_hwres }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is not changed
+          - result is failed
+          - '"Atleast one of the System Hardware Resources should to be provided" in result.msg'
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+

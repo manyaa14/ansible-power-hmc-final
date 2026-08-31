@@ -1,0 +1,55 @@
+- name: Verify virtual switch mode modification
+  block:
+    - name: Create mode-test switch with Veb mode
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_mode_only }}"
+        virtual_switch_mode: "{{ switch_mode_veb }}"
+        state: present
+      register: setup_out
+
+    - name: Modify virtual switch mode to Vepa
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_mode_only }}"
+        virtual_switch_mode: "{{ switch_mode_vepa }}"
+        state: modify
+      register: testout
+
+    - name: Stdout the mode-modify response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify virtual switch mode change succeeds
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'modified successfully' in testout.msg"
+
+    - name: Verify modified switch facts
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_mode_only }}"
+        state: facts
+      register: facts_out
+
+    - name: Verify mode is updated to Vepa
+      assert:
+        that:
+          - facts_out is success
+          - facts_out.virtual_switch_info.virtual_switches | length == 1
+          - facts_out.virtual_switch_info.virtual_switches[0].switch_mode == switch_mode_vepa
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

@@ -1,0 +1,28 @@
+<TestSuite>
+    <TestCases>
+        <!-- Mandatory parameter error cases -->
+        <TestCase platform="asterix">1ErrorMissingHmcHost.yaml</TestCase>
+        <TestCase platform="asterix">2ErrorMissingHmcAuth.yaml</TestCase>
+        <TestCase platform="asterix">3ErrorMissingSystemName.yaml</TestCase>
+        <TestCase platform="asterix">4ErrorMissingViosName.yaml</TestCase>
+        <!-- Default component=all (no component specified) -->
+        <TestCase platform="asterix">5FactsDefaultComponentAll.yaml</TestCase>
+        <!-- SCSI test cases -->
+        <TestCase platform="asterix">6FactsComponentVscsi.yaml</TestCase>
+        <TestCase platform="asterix">7FactsVscsiWithVadapter.yaml</TestCase>
+        <TestCase platform="asterix">8FactsVscsiWithPhysloc.yaml</TestCase>
+        <TestCase platform="asterix">9FactsVscsiWithTypes.yaml</TestCase>
+        <TestCase platform="asterix">10FactsVscsiWithCpid.yaml</TestCase>
+        <TestCase platform="asterix">11ErrorVscsiUnsupportedVtd.yaml</TestCase>
+        <TestCase platform="asterix">12ErrorVscsiUnsupportedHostname.yaml</TestCase>
+        <!-- NET test cases -->
+        <TestCase platform="asterix">13FactsComponentNet.yaml</TestCase>
+        <TestCase platform="asterix">14FactsNetWithVadapter.yaml</TestCase>
+        <TestCase platform="asterix">15FactsNetWithPhysloc.yaml</TestCase>
+        <TestCase platform="asterix">16ErrorNetUnsupportedTypes.yaml</TestCase>
+        <TestCase platform="asterix">17ErrorNetUnsupportedCpid.yaml</TestCase>
+        <TestCase platform="asterix">18ErrorNetUnsupportedVtd.yaml</TestCase>
+        <TestCase platform="asterix">19ErrorNetUnsupportedHostname.yaml</TestCase>
+        <TestCase platform="asterix">20FactsNetUnavailablePhysloc.yaml</TestCase>
+    </TestCases>
+</TestSuite>

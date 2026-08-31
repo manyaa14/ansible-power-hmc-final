@@ -1,0 +1,34 @@
+- name: Create VIOS with settings
+  block:
+    - name: Create Virtual IO Server
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + '3' }}"
+        settings:
+          lpar_id: "{{ lpar_id }}"
+          allow_perf_collection: "{{ allow_perf_collection }}"
+          lpar_avail_priority: "{{ lpar_avail_priority }}"
+          msp: "{{ msp }}"
+          time_ref: "{{ time_ref }}"
+          vtpm_enabled: "{{ vtpm_enabled }}"
+          profile_name: "{{ profile_name }}"
+        state: present
+      register: testout
+
+    - name: Stdout the created VIOS details
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify that vios gets created successfully
+      assert:
+        that:
+          - testout is changed
+          - testout is success
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "Failed to create VIOS with settings"
+

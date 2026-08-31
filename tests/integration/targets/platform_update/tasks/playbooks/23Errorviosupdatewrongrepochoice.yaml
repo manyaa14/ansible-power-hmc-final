@@ -1,0 +1,28 @@
+---
+- name: Verify error when wrong resource_type choice is provided in vios_update
+  block:
+    - name: Execute vios_update with invalid resource_type value
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          vios_update:
+            - update_type: Update
+              vios_name: "{{ vios_name }}"
+              update_order: 1
+              resource_type: FTPServer
+              vios_image_name: "{{ vios_image_name }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'resource_type' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,31 @@
+---
+- name: Verify error when migrating multiple LPARs with vm_names but using lpar_id and pool_id in shared_proc_pool
+  block:
+    - name: Migrate with vm_names but lpar_id provided instead of lpar_name (expect failure)
+      powervm_lpar_migration:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        src_system: "{{ src_system }}"
+        dest_system: "{{ dest_system }}"
+        vm_names:
+          - "{{ vm_name1 }}"
+          - "{{ vm_name2 }}"
+        shared_proc_pool:
+          - lpar_id: 4
+            pool_id: "{{ pool_id1 }}"
+          - lpar_id: 8
+            pool_id: "{{ pool_id2 }}"
+        action: migrate
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'vm_ids' in result.msg or 'lpar_id' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

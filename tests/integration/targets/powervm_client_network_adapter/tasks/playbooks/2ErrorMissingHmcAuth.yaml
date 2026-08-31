@@ -1,0 +1,21 @@
+- name: Verify create fails when hmc_auth is missing
+  block:
+    - name: Create CNA without hmc_auth
+      powervm_client_network_adapter:
+        hmc_host: '{{ inventory_hostname }}'
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        virtual_network_name: "{{ virtual_network_name }}"
+        state: present
+      register: testout
+      ignore_errors: true
+
+    - name: Verify missing hmc_auth error is reported
+      assert:
+        that:
+          - testout is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

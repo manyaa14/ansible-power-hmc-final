@@ -1,0 +1,28 @@
+- name: Error-when we miss build_file for nfs locationtype for updated state
+  block:
+    - name: Error-when we miss build_file for nfs locationtype for updated state
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config:
+          location_type: "{{ config_nfs['location_type'] }}"
+          hostname: "{{ config_nfs['hostname'] }}"
+          mount_location: "{{ config_nfs['mount_location'] }}"
+        state: upgraded
+      register: hmc_build_info
+      ignore_errors: yes
+
+    - name: Stdout the Probed HMC build info 
+      debug:
+        msg: '{{ hmc_build_info }}'
+
+    - name: Verify the Error message
+      assert:
+        that:
+          - hmc_build_info is failed
+          - hmc_build_info is not changed
+          - "'ParameterError: mandatory parameter' in hmc_build_info.msg"
+          - "'build_file' in hmc_build_info.msg"
+          - "'is missing' in hmc_build_info.msg"
+
+

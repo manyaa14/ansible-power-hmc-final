@@ -1,0 +1,25 @@
+- name: Verify that play throws error when os_type is invalid
+  block:
+    - name: Verify that play throws error when os_type is invalid
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name  }}"
+        os_type: "AnsbleTest"
+        mem: 512
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify that play reports error
+      assert:
+        that:
+          - '"value of os_type must be one of: aix, linux, aix_linux, ibmi, got" in result.msg'
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

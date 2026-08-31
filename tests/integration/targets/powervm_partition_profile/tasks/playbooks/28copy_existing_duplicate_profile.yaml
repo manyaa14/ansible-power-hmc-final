@@ -1,0 +1,30 @@
+- name: Verify copy returns already exists warning for duplicate profile
+  block:
+    - name: Copy partition profile using an already existing duplicate profile name
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_copy_source }}"
+        duplicate_prof_name: "{{ profile_copy_duplicate }}"
+        action: copy
+      register: testout
+
+    - name: Stdout the copy existing-duplicate response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify copy existing duplicate warning is reported
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+          - "'already exists' in testout.warning"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

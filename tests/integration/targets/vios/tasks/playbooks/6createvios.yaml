@@ -1,0 +1,36 @@
+- name: Create Virtual IO Server
+  block:
+    - name: Create Virtual IO Server
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name + '6' }}"
+        settings:
+          mem_expansion: "{{ mem_expansion }}"
+          hpt_ratio: "{{ hpt_ratio }}"
+          proc_mode: "{{ proc_mode }}"
+          min_procs: "{{ min_procs }}"
+          desired_procs: "{{ desired_procs }}"
+          max_procs: "{{ max_procs }}"
+          min_proc_units: "{{ min_proc_units }}"
+          desired_proc_units: "{{ desired_proc_units }}"
+          max_proc_units: "{{ max_proc_units }}"
+          uncap_weight: "{{ uncap_weight }}"
+        state: present
+      register: testout
+
+    - name: Stdout the created VIOS details
+      debug:
+        msg: '{{ testout }}'
+  
+    - name: Verify that VIOS gets created successfully
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

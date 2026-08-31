@@ -1,0 +1,32 @@
+- name: Error-when vios_name is missing
+  block:
+    - name: Error-when vios_name is missing
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + 'NPIV' }}"
+        os_type: "{{ os_type_ibmi }}"
+        max_virtual_slots: "{{ max_virtual_slots }}"
+        npiv_config:
+          - fc_port: "{{ fc_port }}"
+            wwpn_pair: "{{ wwpn_pair }}"
+        state: "{{ state_present }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Stdout the Error details
+      debug:
+        msg: "{{ result }}"
+
+    - name: Verify the error message
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'missing required arguments: vios_name found in npiv_config' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

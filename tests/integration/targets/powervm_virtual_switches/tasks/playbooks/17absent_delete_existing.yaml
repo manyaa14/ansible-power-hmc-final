@@ -1,0 +1,38 @@
+- name: Verify delete removes an existing virtual switch
+  block:
+    - name: Ensure the delete-existing virtual switch is present
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_delete_existing }}"
+        virtual_switch_mode: "{{ switch_mode_veb }}"
+        state: present
+      register: create_out
+
+    - name: Delete an existing virtual switch
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_delete_existing }}"
+        state: absent
+      register: testout
+
+    - name: Stdout the delete response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify delete succeeds
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'deleted successfully' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

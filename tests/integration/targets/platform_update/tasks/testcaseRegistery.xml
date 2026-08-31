@@ -1,0 +1,41 @@
+<TestSuite>
+    <TestCases>
+        <!-- General group -->
+        <TestCase platform="asterix">1Errormissingsystemname.yaml</TestCase>
+        <TestCase platform="asterix">2Errorwithouthostauth.yaml</TestCase>
+        <TestCase platform="asterix">3Errorunsupportedparams.yaml</TestCase>
+        <TestCase platform="asterix">4Errorneitherstatewithplatformconfig.yaml</TestCase>
+        <!-- SystemFirmwareUpdate group -->
+        <TestCase platform="asterix">5Errorfirmwareupdatewithoutupdate_type.yaml</TestCase>
+        <TestCase platform="asterix">6Errorfirmwareupdatewithsriovinfowhenupdatetypeisupdate.yaml</TestCase>
+        <TestCase platform="asterix">7Errorsriovinfowithoutsriovadapterid.yaml</TestCase>
+        <TestCase platform="asterix">8Errorsrioupdateinfowithoutsubtype.yaml</TestCase>
+        <TestCase platform="asterix">9Errorsrioupdateinfowithinvalidsubtype.yaml</TestCase>
+        <TestCase platform="asterix">10Errorfirmwareupdatewrongresourcetype.yaml</TestCase>
+        <TestCase platform="asterix">11Errorfirmwarenoupdatewithresourcetype.yaml</TestCase>
+        <TestCase platform="asterix">12Errorfirmwareupdatesriovadapternotpresent.yaml</TestCase>
+        <TestCase platform="asterix">13Errorfirmwareupdatewithbothallandadapterid.yaml</TestCase>
+        <TestCase platform="asterix">14Errorfirmwareupdateunsupportedparams.yaml</TestCase>
+        <TestCase platform="asterix">15Errorfirmwareupdatesriovunsupportedparams.yaml</TestCase>
+        <!-- VIOSUpdate group -->
+        <TestCase platform="asterix">16Errorviosupdatewithoutupdate_type.yaml</TestCase>
+        <TestCase platform="asterix">17Errorviosupdatewithoutvisoname.yaml</TestCase>
+        <TestCase platform="asterix">18Errorviosupdatewithoutresourcetype.yaml</TestCase>
+        <TestCase platform="asterix">19Errorviosupdateioadapterwithoutdevice.yaml</TestCase>
+        <TestCase platform="asterix">20Errorviosupdateioadapterbothallanddevice.yaml</TestCase>
+        <TestCase platform="asterix">21Errorviosupdatewrongviosname.yaml</TestCase>
+        <TestCase platform="asterix">22Errorviosupdateinvalidupdatetype.yaml</TestCase>
+        <TestCase platform="asterix">23Errorviosupdatewrongrepochoice.yaml</TestCase>
+        <TestCase platform="asterix">24Errorviosupdatenoupdatewitharesourcetype.yaml</TestCase>
+        <TestCase platform="asterix">25Errorviosupdateunsupportedparams.yaml</TestCase>
+        <TestCase platform="asterix">26Errorviosupdateioadapterunsupportedparams.yaml</TestCase>
+        <TestCase platform="asterix">27Errorpartitionmigrationwithoutotherconfig.yaml</TestCase>
+        <TestCase platform="asterix">28Errorpartitionmigrationwithoutisquickevac.yaml</TestCase>
+        <!-- Partition Migration group -->
+        <TestCase platform="asterix">29Errorpartitionmigrationunsupportedparam.yaml</TestCase>
+        <TestCase platform="asterix">30Errorfactswithoutbothstateandsystemname.yaml</TestCase>
+        <TestCase platform="asterix">31Errorfactswithouthostname.yaml</TestCase>
+        <!-- Facts group -->
+        <TestCase platform="asterix">32Errorfactswithbothstateandplatformconfig.yaml</TestCase>
+    </TestCases>
+</TestSuite>

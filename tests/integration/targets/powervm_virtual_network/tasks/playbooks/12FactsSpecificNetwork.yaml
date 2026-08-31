@@ -1,0 +1,25 @@
+- name: Get specific virtual network facts by name
+  block:
+    - name: Get facts for a specific virtual network
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        network_name: "{{ network_name_existing }}"
+        state: facts
+      register: testout
+
+    - name: Stdout the specific virtual network facts
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify specific virtual network facts are returned
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

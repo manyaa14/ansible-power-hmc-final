@@ -1,0 +1,44 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/vios_maintenance/tasks
+plb_dir: targets/vios_maintenance/tasks/playbooks
+selected_test_platform: asterix
+
+# vios_maintenance module variables
+
+# HMC / system identifiers
+system_name: Server-9080-M9S-SN12345AB
+
+# VIOS identification
+vios_name: VIOS1
+wrong_vios_name: invalid-vios-999
+wrong_system_name: invalid-system-999
+
+# state=present (viosioconfig backup) variables
+backup_name_ioconfig: test_ioconfig_bk
+backup_types_ioconfig: viosioconfig
+
+# state=present (full vios backup) variables
+backup_name_full: test_full_bk
+backup_types_full: vios
+nimol_resource: 0
+media_repository: 0
+volume_group_structure: 0
+
+# state=present (ssp backup) variables
+backup_name_ssp: test_ssp_bk
+backup_types_ssp: ssp
+
+# state=restore variables
+restore_backup_name: test_ioconfig_bk.tar.gz
+restore_types: viosioconfig
+restart_vios: false
+
+# state=absent variables
+file_list_to_remove:
+  - test_full_bk.tar.gz
+
+# state=modify variables
+modify_backup_name: test_ssp_bk.tar.gz
+new_backup_name: test_ssp_bk_renamed.tar.gz

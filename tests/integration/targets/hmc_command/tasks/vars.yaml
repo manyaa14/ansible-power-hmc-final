@@ -1,0 +1,23 @@
+---
+
+status_fail: "TESTCASE FAILED"
+
+task_dir: targets/hmc_command/tasks
+plb_dir: targets/hmc_command/tasks/playbooks
+
+passwd: abcd1234
+taskrole: hmcviewer
+username: vieweruser
+cmd: lshmcusr -F name,taskrole,authentication_type
+
+commands:
+  - lshmc -V
+  - lshmc -r
+  - cat .version
+  - mkhmcusr -i "name=testansible,taskrole=hmcsuperadmin,authentication_type=local,passwd=abcd1234,remote_ssh_access=1,remote_webui_access=1"
+  - lshmc -v
+  - lshmc -b
+  - man chsysconn
+  - ls
+  - rmhmcusr -t all
+

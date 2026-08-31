@@ -1,0 +1,87 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/vios/tasks
+plb_dir: targets/vios/tasks/playbooks
+selected_test_platform: asterix
+
+system_name: HV4
+name: Ansible_CT_Vios1
+profile_name: def@ultone
+lpar_id: 19
+allow_perf_collection: 1
+lpar_avail_priority: 125
+msp: 1
+time_ref: 1
+vtpm_enabled: 1
+sync_curr_profile: 2
+hardware_mem_encryption: 1
+secure_boot: 1
+keystore_kbytes: 5
+min_mem: 256
+desired_mem: 512
+max_mem: 1024
+mem_mode: ded
+mem_expansion: 9
+hpt_ratio: 1:512
+proc_mode: shared
+min_procs: 2
+desired_procs: 5
+max_procs: 9
+min_proc_units: 1
+desired_proc_units: 4
+max_proc_units: 7
+uncap_weight: 2
+#shared_proc_pool_name: Ansible
+affinity_group_id: 2
+# io_slots: 554041411/none/0
+io_slots: 21060043/none/0
+auto_start: 1
+boot_mode: ds
+power_ctrl_lpar_ids: 5
+conn_monitoring: 1
+max_virtual_slots: 1000
+work_group_id: none
+redundant_err_path_reporting: 1
+lpar_proc_compat_mode: POWER11
+lpar_env: vioserver
+suspend_capable: 1
+simplified_remote_restart_capable: 1
+remote_restart_capable: 1
+rs_device_name: rew
+os400_restricted_io_mode: lop
+powervm_mgmt_capable: yertr
+migration_disabled: 1
+virtual_serial_num: 9
+min_num_huge_pages: 1
+max_num_huge_pages: 9
+lpar_name: 5
+desired_io_entitled_mem: 9
+load_source_slot: ui
+console_slot: 9
+op_console_slot: 89
+hsl_pool_id: io
+virtual_opti_pool_id: io
+alt_console_slot: 8
+alt_restart_device_slot: uio
+mem_weight: 9
+vnic_adapters: iop/y
+electronic_err_reporting: 1
+
+
+# Custom User Credentials
+customuser: customuser
+customuser_passwd: abcd1234
+
+
+#Install Variables
+profile_name_install: default_profile
+io_slots_install: 21060043/none/0
+nim_IP: 9.3.165.16
+nim_gateway: 9.3.22.129
+vios_IP: 9.3.22.178
+nim_subnetmask: 255.255.255.128
+timeout: 12
+prof_name: default_profile
+nim_vlan_priority: 0
+nim_vlan_id: 0

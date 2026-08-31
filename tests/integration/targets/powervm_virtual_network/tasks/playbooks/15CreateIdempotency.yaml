@@ -1,0 +1,28 @@
+- name: Verify create is idempotent when network already exists
+  block:
+    - name: Create virtual network that already exists
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        network_name: "{{ network_name_create }}"
+        network_vlan_id: "{{ network_vlan_id }}"
+        switch_name: "{{ switch_name }}"
+        tagged_network: "{{ tagged_network }}"
+        state: present
+      register: testout
+
+    - name: Stdout the idempotency response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify no change is made for existing network
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

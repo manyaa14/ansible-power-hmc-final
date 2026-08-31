@@ -1,0 +1,1 @@
+# sttp with ssh upgrade is not enabled deliberatly bcz of an upgrade issue

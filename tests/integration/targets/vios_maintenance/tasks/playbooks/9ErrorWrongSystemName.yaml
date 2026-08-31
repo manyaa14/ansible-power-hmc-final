@@ -1,0 +1,26 @@
+---
+- name: Verify error when invalid managed system name is provided
+  block:
+    - name: Create backup with wrong system name
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ wrong_system_name }}"
+          vios_name: "{{ vios_name }}"
+          backup_name: "{{ backup_name_ioconfig }}"
+        state: present
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'managed system is not available' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

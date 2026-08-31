@@ -1,0 +1,27 @@
+---
+- name: List Partition Facts
+  block:
+    - name: Partition Facts
+      hmc_user:
+        state: facts
+        hmc_host: "{{ inventory_hostname }}"
+        name: "{{ name }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        enable_user: True
+      register: result
+      ignore_errors: yes
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - "'ParameterError: unsupported parameter: enable_user' in result.msg"
+          - result is failed
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"

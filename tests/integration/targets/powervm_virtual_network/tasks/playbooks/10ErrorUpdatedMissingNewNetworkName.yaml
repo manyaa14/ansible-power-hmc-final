@@ -1,0 +1,21 @@
+- name: Verify update fails when new_network_name is missing
+  block:
+    - name: Update virtual network without new_network_name
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        network_name: "{{ network_name_create }}"
+        state: updated
+      register: testout
+      ignore_errors: true
+
+    - name: Verify missing new_network_name error is reported
+      assert:
+        that:
+          - testout is failed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

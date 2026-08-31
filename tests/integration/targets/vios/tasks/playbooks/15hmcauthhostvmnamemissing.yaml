@@ -1,0 +1,26 @@
+- name: Error-When hmc_auth,hmc_host,system_name are missing
+  block:
+    - name: Error-When hmc_auth,hmc_host,system_name are missing
+      vios:
+        name: "{{ name }}"
+        settings:
+          profile_name: "{{ profile_name }}"
+        state: present
+      register: testout
+      ignore_errors: yes
+
+    - name: Stdout the created VIOS
+      debug:
+        msg: '{{ testout }}'
+
+    - name : Verify that play reports error When hmc_auth,hmc_host,system_name are missing
+      assert:
+        that:
+          - '"missing required arguments: hmc_auth, hmc_host" in testout.msg'
+          - testout is failed
+          - testout is not changed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

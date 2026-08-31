@@ -1,0 +1,31 @@
+- name: Verify update is idempotent when profile is already in desired configuration
+  block:
+    - name: Re-run update with the same desired shared profile configuration
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_update_shared }}"
+        state: updated
+        processor_settings: "{{ shared_processor_settings_all_options }}"
+        memory_settings: "{{ memory_settings_update_shared_hugepages }}"
+      register: testout
+
+    - name: Stdout the update idempotency response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify update idempotency warning is reported
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+          - "'already in desired configuration' in testout.warning"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

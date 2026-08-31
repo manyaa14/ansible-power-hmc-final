@@ -1,0 +1,27 @@
+<TestSuite>
+    <TestCases>
+        <!-- state=present -->
+        <TestCase platform="asterix">1CreateViosioconfig.yaml</TestCase>
+        <TestCase platform="asterix">2CreateViosfullbackup.yaml</TestCase>
+        <TestCase platform="asterix">3CreateSspBackup.yaml</TestCase>
+        <!-- state=facts -->
+        <TestCase platform="asterix">4Facts.yaml</TestCase>
+        <!-- state=restore -->
+        <TestCase platform="asterix">5RestoreViosioconfig.yaml</TestCase>
+        <!-- state=modify -->
+        <TestCase platform="asterix">6ModifyBackupName.yaml</TestCase>
+        <!-- negative testcases -->
+        <TestCase platform="asterix">7ErrorMissingViosIdent.yaml</TestCase>
+        <TestCase platform="asterix">8ErrorMutuallyExclusiveViosIdent.yaml</TestCase>
+        <TestCase platform="asterix">9ErrorWrongSystemName.yaml</TestCase>
+        <TestCase platform="asterix">10ErrorWrongViosName.yaml</TestCase>
+        <TestCase platform="asterix">11ErrorMissingBackupName.yaml</TestCase>
+        <TestCase platform="asterix">12ErrorUnsupportedRestoreTypeFull.yaml</TestCase>
+        <TestCase platform="asterix">13ErrorAbsentMissingFileList.yaml</TestCase>
+        <TestCase platform="asterix">14ErrorModifyMissingNewName.yaml</TestCase>
+        <TestCase platform="asterix">15ErrorNimolResourceForNonViosType.yaml</TestCase>
+        <TestCase platform="asterix">16ErrorMissingHmcAuth.yaml</TestCase>
+        <!-- cleanup -->
+        <TestCase platform="asterix">17Cleanup.yaml</TestCase>
+    </TestCases>
+</TestSuite>

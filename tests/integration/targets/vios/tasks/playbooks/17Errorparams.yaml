@@ -1,0 +1,35 @@
+- name: Error-when we specify prof_name,location_code,nim_subnetmask,nim_vlan_id,nim_vlan_priority,timeout
+  block:
+    - name: Error-when we specify prof_name,location_code,nim_subnetmask,nim_vlan_id,nim_vlan_priority,timeout
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        name: "{{ name }}"
+        settings:
+          profile_name: "{{ profile_name }}"
+        prof_name: test
+        location_code: T1
+        nim_subnetmask: 255.255.242.0
+        nim_vlan_id: 9
+        nim_vlan_priority: 3
+        timeout: 100
+        state: present
+      register: testout
+      ignore_errors: yes
+
+    - name: Stdout the Info
+      debug:
+        msg: '{{ testout }}'
+
+    - name : Verify Error-when we specify prof_name,location_code,nim_subnetmask,nim_vlan_id,nim_vlan_priority,timeout
+      assert:
+        that:
+          - testout is not changed
+          - testout is failed
+          - "'ParameterError: unsupported parameters: nim_subnetmask, prof_name, location_code, nim_vlan_id, nim_vlan_priority, timeout' in testout.msg"
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

@@ -1,0 +1,39 @@
+- name: Verify create fails when shared processor fields are incomplete
+  block:
+    - name: Create shared partition profile with incomplete processor settings
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_shared_create_basic }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings:
+          desired_processing_units: 2
+          processor_mode: shared
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the incomplete shared processor response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify shared processor required fields error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'Missing required processor_settings fields' in testout.msg"
+          - "'minimum_processors' in testout.msg"
+          - "'maximum_processors' in testout.msg"
+          - "'desired_processors' in testout.msg"
+          - "'minimum_processing_units' in testout.msg"
+          - "'maximum_processing_units' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

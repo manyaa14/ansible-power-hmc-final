@@ -1,0 +1,24 @@
+- name: Testcase4
+  block:
+    - name: Verify that play throws error when we specify power_off_policy other than 0 or 1
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        power_off_policy: 9
+        action: "{{ action_modify_syscfg }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verify the Result
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'value of power_off_policy must be one of: 1, 0, got: 9' in result.msg"
+
+  rescue:
+    - name: Mark this testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}" 
+

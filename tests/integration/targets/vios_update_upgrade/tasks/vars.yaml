@@ -1,0 +1,31 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/vios_update_upgrade/tasks
+plb_dir: targets/vios_update_upgrade/tasks/playbooks
+selected_test_platform: asterix
+
+# vios_update_upgrade module variables
+system_name: HV4
+system_name_mtms: 8203-E4A*ACE0001
+vios_name: VIOS1
+vios_id: "2"
+
+# Image / file variables
+image_name: test
+ssh_key_file: /home/hmcuser/keys/id_rsa
+sftp_host: 9.3.90.3
+sftp_user: sreenidhi
+sftp_password: abcd1234
+mount_loc: /home/hscroot
+nfs_host: 9.3.90.3
+directory: /home/hscroot
+option_value: "3"
+
+# file_list for patch updates
+file_list_single:
+  - file1
+file_list_multi:
+  - file1
+  - file2
+  - file3

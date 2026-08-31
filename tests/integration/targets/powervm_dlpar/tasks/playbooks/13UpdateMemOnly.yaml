@@ -1,0 +1,24 @@
+---
+- name: "TC13 - Update mem only on partition"
+  block:
+    - name: Run powervm_dlpar update_proc_mem with mem settings only
+      powervm_dlpar:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        mem_settings:
+          mem: "{{ mem }}"
+        action: update_proc_mem
+      register: result
+
+    - name: Verify task succeeded
+      assert:
+        that:
+          - result is success
+          - result.partition_info is defined
+        fail_msg: "{{ Status_Fail }}"
+  rescue:
+    - name: Testcase failed
+      debug:
+        msg: "{{ Status_Fail }}"

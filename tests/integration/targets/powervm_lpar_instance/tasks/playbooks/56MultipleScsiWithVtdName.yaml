@@ -1,0 +1,52 @@
+- name: Create LPAR with multiple SCSI adapters using custom VTD names
+  block:
+    - name: Create LPAR with multiple SCSI adapters using custom VTD names
+      powervm_lpar_instance:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + 'VTD2' }}"
+        proc: 1
+        proc_unit: 1
+        os_type: "{{ os_type_linux }}"
+        volume_config:
+          - vios_name: "b76-vios2"
+            volume_name: hdisk11
+            vtd_name: trial11
+          - vios_name: "b76-vios2"
+            volume_name: hdisk17
+            vtd_name: trial17
+        state: present
+      register: result
+
+    - name: Verify LPAR gets created successfully with multiple custom VTDs
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+    - name: Delete logical partition created with multiple custom VTDs
+      powervm_lpar_instance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name + 'VTD2' }}"
+        state: absent
+      register: testout
+
+    - name: Stdout the delete response
+      debug:
+        msg: "{{ testout }}"
+
+    - name: Verify created LPAR is deleted
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

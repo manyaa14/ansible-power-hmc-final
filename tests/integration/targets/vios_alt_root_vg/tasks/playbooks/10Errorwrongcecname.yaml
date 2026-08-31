@@ -1,0 +1,27 @@
+---
+- name: Verify error when wrong system_name (CEC) is provided for copy state
+  block:
+    - name: Copy rootvg with invalid system_name
+      vios_alt_root_vg:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ wrong_system_name }}"
+        vios_name: "{{ vios_name }}"
+        force: true
+        targets:
+          - "{{ target_disk1 }}"
+          - "{{ target_disk2 }}"
+        state: copy
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'managed system is not available' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

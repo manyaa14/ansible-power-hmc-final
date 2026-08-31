@@ -1,0 +1,38 @@
+---
+Status_Fail: "TestCase FAILED"
+
+task_dir: targets/powervm_client_network_adapter/tasks
+plb_dir: targets/powervm_client_network_adapter/tasks/playbooks
+selected_test_platform: asterix
+
+system_name: HV4
+
+# state=present variables
+vm_name: ansible-cna-lpar
+virtual_network_name: ansible-vnw-01
+virtual_ethernet_adapter_id_create: 4
+
+# state=facts variables
+# (reuses vm_name / vios_name above)
+# optional filter by virtual_network_name or virtual_ethernet_adapter_id
+
+# state=updated variables
+mac_address: B6:08:90:7C:A6:08
+os_mac_address_restrictions: allow_all
+allowed_os_mac_addresses:
+  - B6:08:90:7C:A6:08
+qos_priority_enabled: true
+qos_priority: 3
+vsi_type_id: 1
+vsi_manager_id: 2
+vsi_type_version: 3
+
+# state=absent variables
+virtual_ethernet_adapter_id_delete: 4
+
+# state=detach_virtual_network variables
+virtual_ethernet_adapter_id_detach: 4
+virtual_network_name_detach: ansible-vnw-01
+
+# VIOS-based testcase variables (vios must be shut down)
+vios_name: ansible-cna-vios

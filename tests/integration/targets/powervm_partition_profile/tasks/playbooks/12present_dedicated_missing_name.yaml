@@ -1,0 +1,30 @@
+- name: Verify dedicated profile create fails when name is missing
+  block:
+    - name: Create dedicated partition profile without required name
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        state: present
+      register: testout
+      ignore_errors: true
+
+    - name: Stdout the dedicated missing-name response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify dedicated missing profile name error is reported
+      assert:
+        that:
+          - testout is failed
+          - testout is not changed
+          - "'missing required arguments: name' in testout.msg"
+          - "'name' in testout.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

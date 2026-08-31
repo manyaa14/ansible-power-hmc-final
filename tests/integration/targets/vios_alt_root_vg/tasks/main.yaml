@@ -1,0 +1,28 @@
+- include_vars: vars.yaml
+
+- name: Set selected test platform
+  set_fact:
+    selected_test_platform: "{{ selected_test_platform | default('asterix') | trim | lower }}"
+
+- name: Read testcase registry testcase names
+  xml:
+    path: '{{ task_dir }}/testcaseRegistery.xml'
+    xpath: /TestSuite/TestCases/TestCase
+    content: text
+  register: xmlresp
+
+- name: Read testcase registry platform attributes
+  xml:
+    path: '{{ task_dir }}/testcaseRegistery.xml'
+    xpath: /TestSuite/TestCases/TestCase
+    content: attribute
+  register: xmlresp_platforms
+
+- name: Running the playbooks of vios_alt_root_vg modules
+  include_tasks: testcase_wrapper.yaml
+  loop: "{{ xmlresp.matches | zip(xmlresp_platforms.matches) | list }}"
+  loop_control:
+    loop_var: testcase_item
+  vars:
+    testcase_name: "{{ testcase_item.0.TestCase }}"
+    testcase_platform: "{{ testcase_item.1.TestCase.platform | default('asterix') | lower }}"

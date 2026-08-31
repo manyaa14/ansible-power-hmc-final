@@ -1,0 +1,27 @@
+---
+- name: Retrieve ldap user facts
+  block:
+    - name: Retrieve ldap user facts
+      hmc_user:
+        state: facts
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ type_ldap }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Output Users
+      debug:
+         msg: "{{ result }}"
+
+    - assert:
+        that:
+          - "'ParameterError: facts state will not support type: ldap' in result.msg"
+          - result is failed
+          - result is not changed
+
+  
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+         msg: "{{ status_fail }}"

@@ -1,0 +1,31 @@
+- name: Verify dedicated profile creation succeeds with allow_processor_sharing active
+  block:
+    - name: Create dedicated partition profile with allow_processor_sharing active
+      powervm_partition_profile:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        vm_name: "{{ vm_name }}"
+        name: "{{ profile_dedicated_active }}"
+        state: present
+        memory_settings: "{{ memory_settings_basic }}"
+        processor_settings: "{{ dedicated_processor_settings_active }}"
+      register: testout
+
+    - name: Stdout the dedicated active-sharing response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify dedicated active-sharing profile is created successfully
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'partition profile is created successfully' in testout.profile_info.msg"
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

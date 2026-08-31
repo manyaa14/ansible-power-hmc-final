@@ -1,0 +1,20 @@
+---
+- name: Verify that playbook reports an error when hmchost & hmcauth options are missing in playbook
+  block:
+    - name: Error when hmchost & hmcauth keys are missing
+      hmc_command:
+        cmd: "{{ cmd }}"
+      register: testout
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - "'missing required arguments: hmc_auth, hmc_host' in testout.msg"
+          - testout is not changed
+          - testout is failed
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+

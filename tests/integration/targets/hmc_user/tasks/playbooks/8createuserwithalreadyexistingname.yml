@@ -1,0 +1,33 @@
+---
+- name: Create hmc user
+  block:
+    - hmc_user:
+        state: present
+        hmc_host: "{{ inventory_hostname }}"
+        name: "{{ ldapusername }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          resourcerole: "{{ resourcerole }}"
+          authentication_type: "{{ authentication_type_ldap }}"
+          taskrole: "{{ taskrole }}"
+          session_timeout: "{{ session_timeout }}"
+          verify_timeout: "{{ verify_timeout }}"
+          idle_timeout: "{{ idle_timeout }}"
+          inactivity_expiration: "{{ inactivity_expiration }}"
+          remote_webui_access: "{{ remote_webui_access }}"
+          remote_ssh_access: "{{ remote_ssh_access }}"
+      register: result
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ status_fail }}"

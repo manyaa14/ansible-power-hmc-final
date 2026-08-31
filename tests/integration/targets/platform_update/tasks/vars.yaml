@@ -1,0 +1,18 @@
+---
+Status_Fail: "TESTCASE FAILED"
+
+task_dir: targets/platform_update/tasks
+plb_dir: targets/platform_update/tasks/playbooks
+selected_test_platform: asterix
+
+# platform_update module variables
+system_name: HV4
+vios_name: VIOS1
+vios_name2: VIOS2
+wrong_vios_name: nonexistent-vios
+inactive_vios_name: hmc-zz1-inactive-vios
+dest_system: HV5
+sriov_adapter_id: 1
+sriov_adapter_id_not_present: 999
+vios_image_name: vios_image_latest
+device_name: ent0

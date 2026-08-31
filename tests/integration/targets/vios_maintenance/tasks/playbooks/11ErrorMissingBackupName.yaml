@@ -1,0 +1,25 @@
+---
+- name: Verify error when backup_name is missing for state=present
+  block:
+    - name: Create backup without specifying backup_name
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+        state: present
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'backup_name' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

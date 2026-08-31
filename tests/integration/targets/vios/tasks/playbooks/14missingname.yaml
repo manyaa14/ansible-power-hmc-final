@@ -1,0 +1,27 @@
+- name: Error-when name is not mentioned
+  block:
+    - name: Error-when name is not mentioned
+      vios:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        settings:
+          profile_name: "{{ profile_name }}"
+        state: present
+      register: testout
+      ignore_errors: yes
+
+    - name: Stdout the created VIOS
+      debug:
+        msg: '{{ testout }}'
+
+    - name : Verify that play reports error when name not mentioned
+      assert:
+        that:
+          - '"state is present but all of the following are missing: name" in testout.msg'
+          - testout is failed
+
+  rescue:
+    - name: Mark the TC as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

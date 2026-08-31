@@ -1,0 +1,6 @@
+<TestSuite>
+    <TestCases>
+        <TestCase platform="asterix">pwd_policy.yaml</TestCase>
+ <TestCase platform="asterix">pwd_policy1.yaml</TestCase>
+     </TestCases>
+</TestSuite>

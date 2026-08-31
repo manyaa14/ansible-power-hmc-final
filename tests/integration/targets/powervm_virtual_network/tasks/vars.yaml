@@ -1,0 +1,28 @@
+---
+Status_Fail: "TestCase FAILED"
+
+task_dir: targets/powervm_virtual_network/tasks
+plb_dir: targets/powervm_virtual_network/tasks/playbooks
+selected_test_platform: asterix
+
+system_name: HV4
+
+# state=facts variables
+network_name_existing: ansible-vnw-facts
+
+# state=present variables
+network_name_create: ansible-vnw-01
+network_name_create_tagged: ansible-vnw-02
+network_name_create_switchid: ansible-vnw-03
+network_vlan_id: 101
+network_vlan_id_tagged: 102
+network_vlan_id_switchid: 103
+switch_name: ETHERNET0
+switch_id: 0
+tagged_network: false
+tagged_network_true: true
+
+# state=updated variables
+new_network_name: ansible-vnw-01-updated
+
+# state=absent variables (reuse create names for cleanup)

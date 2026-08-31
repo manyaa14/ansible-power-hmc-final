@@ -1,0 +1,44 @@
+- name: Verify virtual switch creation with default mode
+  block:
+    - name: Create virtual switch with default mode
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_create_default }}"
+        state: present
+      register: testout
+
+    - name: Stdout the create response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify virtual switch is created with default mode
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'created successfully' in testout.msg"
+
+    - name: Verify created switch facts
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_create_default }}"
+        state: facts
+      register: facts_out
+
+    - name: Verify default mode is Veb
+      assert:
+        that:
+          - facts_out is success
+          - facts_out.virtual_switch_info.virtual_switches | length == 1
+          - facts_out.virtual_switch_info.virtual_switches[0].switch_mode == switch_mode_veb
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

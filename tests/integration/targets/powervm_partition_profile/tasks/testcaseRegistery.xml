@@ -1,0 +1,41 @@
+<TestSuite>
+  <TestCases>
+    <TestCase platform="asterix">1present_missing_name.yaml</TestCase>
+    <TestCase platform="asterix">2present_missing_processor_and_memory.yaml</TestCase>
+    <TestCase platform="asterix">3present_missing_processor_mode.yaml</TestCase>
+    <TestCase platform="asterix">4present_shared_missing_processor_fields.yaml</TestCase>
+    <TestCase platform="asterix">5present_shared_missing_memory_fields.yaml</TestCase>
+    <TestCase platform="asterix">6present_existing_profile.yaml</TestCase>
+    <TestCase platform="asterix">7present_shared_create_minimal.yaml</TestCase>
+    <TestCase platform="asterix">8present_shared_uncapped_missing_weight.yaml</TestCase>
+    <TestCase platform="asterix">9present_shared_uncapped_with_weight.yaml</TestCase>
+    <TestCase platform="asterix">10present_shared_with_pool.yaml</TestCase>
+    <TestCase platform="asterix">11present_shared_invalid_allow_processor_sharing.yaml</TestCase>
+    <TestCase platform="asterix">12present_dedicated_missing_name.yaml</TestCase>
+    <TestCase platform="asterix">13present_dedicated_missing_processor_and_memory.yaml</TestCase>
+    <TestCase platform="asterix">14present_dedicated_invalid_shared_params.yaml</TestCase>
+    <TestCase platform="asterix">15present_dedicated_create_minimal.yaml</TestCase>
+    <TestCase platform="asterix">16present_dedicated_allow_sharing_always.yaml</TestCase>
+    <TestCase platform="asterix">17present_dedicated_allow_sharing_inactive.yaml</TestCase>
+    <TestCase platform="asterix">18present_dedicated_allow_sharing_active.yaml</TestCase>
+    <TestCase platform="asterix">19present_memory_missing_fields.yaml</TestCase>
+    <TestCase platform="asterix">20present_memory_ame_default.yaml</TestCase>
+    <TestCase platform="asterix">21present_memory_expansion_factor.yaml</TestCase>
+    <TestCase platform="asterix">22present_memory_invalid_expansion_factor.yaml</TestCase>
+    <TestCase platform="asterix">23present_memory_invalid_hardware_page_table_ratio.yaml</TestCase>
+    <TestCase platform="asterix">24copy_missing_state_or_action.yaml</TestCase>
+    <TestCase platform="asterix">25copy_missing_duplicate_profile_name.yaml</TestCase>
+    <TestCase platform="asterix">26copy_unsupported_parameters.yaml</TestCase>
+    <TestCase platform="asterix">27copy_success.yaml</TestCase>
+    <TestCase platform="asterix">28copy_existing_duplicate_profile.yaml</TestCase>
+    <TestCase platform="asterix">29update_memory_success.yaml</TestCase>
+    <TestCase platform="asterix">30update_hugepage_success.yaml</TestCase>
+    <TestCase platform="asterix">31update_idempotency.yaml</TestCase>
+    <TestCase platform="asterix">32update_shared_to_dedicated_missing_processors.yaml</TestCase>
+    <TestCase platform="asterix">33update_shared_to_dedicated_success.yaml</TestCase>
+    <TestCase platform="asterix">34update_dedicated_to_shared_missing_units.yaml</TestCase>
+    <TestCase platform="asterix">35update_dedicated_to_shared_success.yaml</TestCase>
+  </TestCases>
+</TestSuite>
+
+<!-- Made with Bob -->

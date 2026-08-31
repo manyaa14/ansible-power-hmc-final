@@ -1,0 +1,54 @@
+- name: Verify virtual switch name modification
+  block:
+    - name: Ensure source switch exists before rename test
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        state: present
+      register: setup_out
+
+    - name: Rename virtual switch
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_source }}"
+        new_switch_name: "{{ switch_name_modify_target }}"
+        state: modify
+      register: testout
+
+    - name: Stdout the rename response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify virtual switch rename succeeds
+      assert:
+        that:
+          - testout is success
+          - testout is changed
+          - "'modified successfully' in testout.msg"
+
+    - name: Verify renamed switch facts
+      powervm_virtual_switches:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        virtual_switch_name: "{{ switch_name_modify_target }}"
+        state: facts
+      register: facts_out
+
+    - name: Verify renamed switch is present
+      assert:
+        that:
+          - facts_out is success
+          - facts_out.virtual_switch_info.virtual_switches | length == 1
+          - facts_out.virtual_switch_info.virtual_switches[0].switch_name == switch_name_modify_target
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"
+
+# Made with Bob

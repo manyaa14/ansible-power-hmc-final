@@ -1,0 +1,25 @@
+- name: COnfigure Ldap
+  block:
+    - name: COnfigure Ldap
+      hmc_user:
+        action: configure_ldap
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        ldap_settings:
+          primary: "{{ primary }}"
+          binddn: "{{ binddn }}"
+          basedn: "{{ basedn }}"
+          bindpw: "{{ bindpw }}"
+      register: result
+
+    - name: Verify the result
+      assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"
+

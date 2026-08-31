@@ -1,0 +1,25 @@
+- name: Delete virtual network
+  block:
+    - name: Delete the updated virtual network
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        network_name: "{{ new_network_name }}"
+        state: absent
+      register: testout
+
+    - name: Stdout the delete response
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify virtual network is deleted
+      assert:
+        that:
+          - testout is changed
+          - testout is success
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

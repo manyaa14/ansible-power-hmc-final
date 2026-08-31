@@ -1,0 +1,31 @@
+---
+- name: Verify error when both all and device are provided in io_adapter_update
+  block:
+    - name: Execute platform update for vios_update io_adapter_update with both all and device
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          vios_update:
+            - update_type: NoUpdate
+              vios_name: "{{ vios_name }}"
+              update_order: 1
+              io_adapter_update:
+                - all: true
+                  device:
+                    - "{{ device_name }}"
+                  repository: IBMWebsite
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'all' in result.msg or 'device' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

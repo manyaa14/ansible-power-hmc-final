@@ -1,0 +1,27 @@
+---
+- name: Verify error when vios_name is missing in vios_update
+  block:
+    - name: Execute platform update for vios_update without vios_name
+      platform_update:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        platform_config:
+          vios_update:
+            - update_type: Update
+              update_order: 1
+              resource_type: IBMWebsite
+              vios_image_name: "{{ vios_image_name }}"
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'vios_name' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

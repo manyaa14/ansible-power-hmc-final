@@ -1,0 +1,34 @@
+- name: Error-when we keep userid & passwd for nfs locationtype for updated state
+  block:
+    - name: Error-when we keep userid & passwd for nfs locationtype for updated state
+      hmc_update_upgrade:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: '{{ curr_hmc_auth }}'
+        build_config:
+          location_type: "{{ config_nfs['location_type'] }}"
+          hostname: "{{ config_nfs['hostname'] }}"
+          userid: "{{ config_ftp['userid'] }}"
+          passwd: "{{ config_ftp['passwd'] }}"
+          mount_location: "{{ config_nfs['mount_location'] }}"
+          build_file: "{{ config_ftp['build_file'] }}"
+        state: upgraded
+      register: hmc_build_info
+      ignore_errors: yes
+
+    - name: Stdout the Probed HMC build info 
+      debug:
+        msg: '{{ hmc_build_info }}'
+
+    - name: Verify the Error message
+      assert:
+        that:
+          - hmc_build_info is failed
+          - hmc_build_info is not changed
+          - "'ParameterError: unsupported parameters: userid, passwd' in hmc_build_info.msg"
+
+  rescue:
+  - name: Mark the Testcase as FAILED
+    debug:
+      msg: "{{ Status_Fail }}"
+
+

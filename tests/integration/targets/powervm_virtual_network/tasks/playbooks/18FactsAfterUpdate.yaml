@@ -1,0 +1,25 @@
+- name: Get facts for virtual network after name update
+  block:
+    - name: Get facts for updated virtual network
+      powervm_virtual_network:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        system_name: "{{ system_name }}"
+        network_name: "{{ new_network_name }}"
+        state: facts
+      register: testout
+
+    - name: Stdout the facts after update
+      debug:
+        msg: '{{ testout }}'
+
+    - name: Verify updated network is accessible by new name
+      assert:
+        that:
+          - testout is success
+          - testout is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}"

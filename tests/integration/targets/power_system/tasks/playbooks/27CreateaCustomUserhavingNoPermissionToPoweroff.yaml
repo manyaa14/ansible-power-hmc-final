@@ -1,0 +1,38 @@
+---
+- name: Verify that we are able to run adhoc command to create custom user having no permission to power off & on cec
+  block:
+    - name: Run adhoc command on HMC
+      hmc_command:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth: "{{ curr_hmc_auth }}"
+        cmd: "{{ item }}"
+      register: result
+      loop: "{{ cmd }}"
+
+    - assert: 
+        that:
+          - result is not changed
+          - result is failed
+
+    - name: Power Off the CEC with user having no permission to poweroff
+      power_system:
+        hmc_host: '{{ inventory_hostname }}'
+        hmc_auth:
+          username: "{{ custom_user }}"
+          password: "{{ custom_user_passwd }}"
+        system_name: "{{ system_name }}"
+        action: "{{ action_poweroff }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Validate the state of cec
+      assert:
+        that:
+          - result is failed
+          - result is not changed
+          - result.msg is search('appropriate authority')
+
+  rescue:
+    - name: Mark the Testcase as FAILED
+      debug:
+        msg: "{{ Status_Fail }}" 

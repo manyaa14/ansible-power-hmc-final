@@ -1,0 +1,24 @@
+---
+- name: Create hmc user
+  block:
+    - name: Create hmc user
+      hmc_user:
+        state: facts
+        hmc_host: "{{ inventory_hostname }}"
+        type: "{{ type_default }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+      register: result
+
+    - name: Output Users
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is not changed
+
+  rescue:
+    - name: Mark the testcase as FAILED
+      debug:
+        msg: "{{ status_fail }}"

@@ -1,0 +1,27 @@
+---
+- name: Verify error when nimol_resource is used with a non-full-vios backup type
+  block:
+    - name: Create viosioconfig backup with nimol_resource set (invalid combination)
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          backup_name: "{{ backup_name_ioconfig }}"
+          nimol_resource: 1
+        state: present
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'nimol_resource' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

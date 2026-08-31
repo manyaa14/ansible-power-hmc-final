@@ -1,0 +1,34 @@
+<TestSuite>
+    <TestCases>
+	<TestCase platform="asterix">1ModifyCecName.yaml</TestCase>
+	       <TestCase platform="asterix">2ChangePowerOffPolicyTo0.yaml</TestCase>
+	       <TestCase platform="asterix">3ChangePowerOffPolicyTo1AndCheckIdempotency.yaml</TestCase>
+	<TestCase platform="asterix">4Errorwhenpoweroffpolicyisinvalid.yaml</TestCase>
+	<TestCase platform="asterix">5PowerOffManagedSystem.yaml</TestCase>
+	<TestCase platform="asterix">6ModifyPowerOnLparStartPolicyToautostart.yaml</TestCase>
+	<TestCase platform="cec">7ModifyPowerOnLparStartPolicyToAutoRecovery.yaml</TestCase>
+	<TestCase platform="asterix">8ErrorWhenPowerOnLparStartPolicyIsInvalid.yaml</TestCase>
+	<TestCase platform="asterix">9ChangePowerOnLparStartPolicyTouserinit.yaml</TestCase>
+	       <TestCase platform="cec">10ModifyHugePages.yaml</TestCase>
+	       <TestCase platform="cec">11Errorwhenhugepagememislarge.yaml</TestCase>
+	       <TestCase platform="cec">12IdempotencyForHugePages.yaml</TestCase>
+	       <TestCase platform="cec">13ModifyMemoryMirroring.yaml</TestCase>
+	       <TestCase platform="asterix">14ModifyMemoryMirroringtoNone.yaml</TestCase>
+	       <TestCase platform="asterix">15ErrorwhenInvalidMemoryMirroringSpecified.yaml</TestCase>
+	<TestCase platform="cec">16Modifypendmemregionsize.yaml</TestCase>
+	<TestCase platform="asterix">17Errorwhennosysparamprovidedformodifystyscfg.yaml</TestCase>
+	       <TestCase platform="asterix">18Errorwhennohwparamprovidedformodifychhwres.yaml</TestCase>
+	       <TestCase platform="asterix">19Errorwhenstateandfactsarementioned.yaml</TestCase>
+	       <TestCase platform="asterix">20Errorwhenstatementionedwithactionpoweroff.yaml</TestCase>
+	       <TestCase platform="asterix">21Errorwhenstateandactionarenotmentioned.yaml</TestCase>
+	       <TestCase platform="asterix">22Errorwhenstatementionedwithactionpoweron.yaml</TestCase>
+	       <TestCase platform="asterix">23IdempotencyforPowerOff.yaml</TestCase>
+	       <TestCase platform="asterix">24UnsupportedParametersForPowerOff.yaml</TestCase>
+	<TestCase platform="asterix">25UnsupportedParametersForPowerOn.yaml</TestCase>
+	       <TestCase platform="asterix">26CustomRoleHavingNoPowerOnPermission.yaml</TestCase>
+	       <TestCase platform="asterix">28PowerOnCec.yaml</TestCase>
+	       <TestCase platform="asterix">29IdempotencyForPowerOn.yaml</TestCase>
+	       <TestCase platform="asterix">30CreateaCustomUserhavingNoPermissionToPoweron.yaml</TestCase>
+	       <TestCase platform="asterix">31CecFacts.Yaml</TestCase>
+    </TestCases>
+</TestSuite>

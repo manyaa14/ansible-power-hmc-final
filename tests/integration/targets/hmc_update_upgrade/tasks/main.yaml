@@ -1,0 +1,16 @@
+- include_vars: vars.yaml
+
+- name: Read an element's attribute values
+  xml:
+    path: '{{ task_dir }}/testcaseRegistery.xml'
+    xpath: /TestSuite/TestCases/TestCase
+    content: text
+  register: xmlresp
+
+
+- name: Running the playbooks of hmc_update_upgrade modules
+  include_tasks: testcase_wrapper.yaml
+  loop: '{{ xmlresp.matches | flatten(levels=1) }}'
+  loop_control:
+    loop_var: testcase_item
+

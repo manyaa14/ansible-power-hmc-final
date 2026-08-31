@@ -1,0 +1,28 @@
+---
+- name: Create a viosioconfig backup for VIOS identified by name
+  block:
+    - name: Create viosioconfig backup file
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          backup_name: "{{ backup_name_ioconfig }}"
+        state: present
+      register: result
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - assert:
+        that:
+          - result is success
+          - result is changed
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

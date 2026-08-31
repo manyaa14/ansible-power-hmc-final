@@ -1,0 +1,23 @@
+---
+- name: Verify error when repository and system_name are both missing for NFS update
+  block:
+    - name: Update vios with only vios_id (no repository or system_name)
+      vios_update_upgrade:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          vios_id: "{{ vios_id }}"
+        state: updated
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result is failed
+          - result is not changed
+          - "'repository' in result.msg"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"

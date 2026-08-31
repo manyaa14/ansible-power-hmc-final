@@ -1,0 +1,61 @@
+---
+- name: Cleanup - remove all backup files created during testing
+  block:
+    - name: Remove viosioconfig backup file created during testing
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ioconfig }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          file_list:
+            - "{{ backup_name_ioconfig }}.tar.gz"
+        state: absent
+      register: result
+      ignore_errors: yes
+
+    - name: Display result
+      debug:
+        msg: "{{ result }}"
+
+    - name: Remove full vios backup file created during testing
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_full }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          file_list:
+            - "{{ backup_name_full }}.tar.gz"
+        state: absent
+      register: result_full
+      ignore_errors: yes
+
+    - name: Display result
+      debug:
+        msg: "{{ result_full }}"
+
+    - name: Remove ssp backup file created during testing (renamed)
+      vios_maintenance:
+        hmc_host: "{{ inventory_hostname }}"
+        hmc_auth: "{{ curr_hmc_auth }}"
+        attributes:
+          types: "{{ backup_types_ssp }}"
+          system: "{{ system_name }}"
+          vios_name: "{{ vios_name }}"
+          file_list:
+            - "{{ new_backup_name }}"
+        state: absent
+      register: result_ssp
+      ignore_errors: yes
+
+    - name: Display result
+      debug:
+        msg: "{{ result_ssp }}"
+
+  rescue:
+    - name: Mark the testcase as failed
+      debug:
+        msg: "{{ Status_Fail }}"
