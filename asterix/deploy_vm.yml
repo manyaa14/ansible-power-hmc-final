@@ -52,9 +52,13 @@
           groupID: "{{ group_id }}"
           VLAN: "{{ vlan }}"
         validate_certs: false
-        status_code: [200, 201, 400]
+        status_code: [200, 201]
       register: vm_deploy_response
-      failed_when: false
+      # failed_when: false
+
+    - name: Debug VM deployment response
+      debug:
+        var: vm_deploy_response.json
 
     - name: Check for VM name conflict
       fail:
@@ -118,7 +122,7 @@
         host: "{{ vm_ip }}"
         port: 22
         delay: 20
-        timeout: 120
+        timeout: 180
         state: started
 
     - name: Remove old SSH host key if exists
@@ -186,4 +190,4 @@
           VM {{ vm_ip }} added to inventory
           Password stored in host_vars/{{ vm_ip }}.yml
 
-# Made with Bob
+
