@@ -117,6 +117,24 @@
       set_fact:
         otp: "{{ (vm_status.json.data | default([]) | selectattr('network.ipaddr', 'defined') | selectattr('network.ipaddr', 'equalto', vm_ip) | list | first).otp }}"
 
+    - name: Debug VM network connectivity from Jenkins
+      shell: |
+        echo "===== VM NETWORK DEBUG ====="
+        echo "VM IP: {{ vm_ip }}"
+
+        echo "----- PING -----"
+        ping -c 3 {{ vm_ip }} || true
+
+        echo "----- TCP PORT 22 -----"
+        nc -vz -w 10 {{ vm_ip }} 22 || true
+
+        echo "----- ROUTE TO VM -----"
+        ip route get {{ vm_ip }} || true
+
+        echo "===== END DEBUG ====="
+      changed_when: false
+
+
     - name: Wait for SSH to become available
       wait_for:
         host: "{{ vm_ip }}"
