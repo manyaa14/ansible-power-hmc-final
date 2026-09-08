@@ -17,16 +17,16 @@ opencert_path: "/OpenCert/HMC-11-1-OpenCert.iso"
 api_base_url: "https://portal.onecloud.wdc.app.cirrus.ibm.com/api/v3"
 
 # OneCloud project ID for your team/project
-project_id: 165
+project_id: 389
 
 # Deployment site location (e.g., RCH = Rochester)
 site: "RCH"
 
 # OneCloud group ID for resource allocation(Input 7 for phmc; 1 for onceloud system)
-group_id: 7
+group_id: 10
 
 # VLAN ID for network configuration
-vlan: 3901
+vlan: 1492
 
 # GitHub repository URL for Asterix emulator source code
 asterix_repo: "https://github.ibm.com/power-hmc/asterix-emulator.git"
