@@ -194,6 +194,22 @@
         mode: '0600'
       no_log: true
 
+    - name: Check Java version
+      command: java -version
+      register: java_version
+      changed_when: false
+
+    - debug:
+        var: java_version.stderr_lines
+
+    - name: Check JAVA_HOME
+      shell: echo $JAVA_HOME
+      register: java_home
+      changed_when: false
+
+    - debug:
+        var: java_home.stdout
+
     - name: Build Asterix emulator
       command: ./gradlew build
       args:
