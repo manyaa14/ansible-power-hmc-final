@@ -132,8 +132,12 @@
         ip route get {{ vm_ip }} || true
 
         echo "===== END DEBUG ====="
+      register: network_debug
       changed_when: false
 
+    - name: Display network debug output
+      debug:
+        var: network_debug.stdout_lines
 
     - name: Wait for SSH to become available
       wait_for:

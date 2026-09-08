@@ -11,6 +11,28 @@
     vm_ip: "{{ inventory_hostname }}"
 
   tasks:
+    - name: Debug VM network connectivity from Jenkins
+      shell: |
+        echo "===== VM NETWORK DEBUG ====="
+        echo "VM IP: {{ vm_ip }}"
+
+        echo "----- PING -----"
+        ping -c 3 {{ vm_ip }} || true
+
+        echo "----- TCP PORT 22 -----"
+        nc -vz -w 10 {{ vm_ip }} 22 || true
+
+        echo "----- ROUTE TO VM -----"
+        ip route get {{ vm_ip }} || true
+
+        echo "===== END DEBUG ====="
+      register: network_debug
+      changed_when: false
+
+    - name: Display network debug output
+      debug:
+        var: network_debug.stdout_lines
+    
     - name: Verify vHMC is fully operational
       shell: |
         sshpass -p "{{ hscroot_password }}" ssh \
