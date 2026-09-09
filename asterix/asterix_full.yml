@@ -210,6 +210,12 @@
     - debug:
         var: java_home.stdout
 
+    - name: Patch Gradle wrapper to use version 9.2.0
+      lineinfile:
+        path: "{{ asterix_dir }}/gradle/wrapper/gradle-wrapper.properties"
+        regexp: '^distributionUrl='
+        line: 'distributionUrl=https\://services.gradle.org/distributions/gradle-9.2.0-bin.zip'
+
     - name: Build Asterix emulator
       command: ./gradlew build
       args:
