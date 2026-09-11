@@ -228,8 +228,8 @@
         regexp: '(?s)java\s*\{[^}]*toolchain\s*\{[^}]*\}[^}]*\}'
         replace: ''
 
-    - name: Build Asterix emulator
-      command: ./gradlew build --info --continue
+    - name: Build Asterix emulator and gather all artifacts
+      command: ./gradlew build gatherAllArtifacts
       args:
         chdir: "{{ asterix_dir }}"
 
@@ -239,33 +239,39 @@
         patterns: "*.zip"
       register: zip_files
 
-    - name: Set zip file variables
+    - name: Set zip file path
       set_fact:
         zip_file_path: "{{ zip_files.files[0].path }}"
-        folder_name: "{{ zip_files.files[0].path | basename | regex_replace('\\.zip$', '') }}"
 
-    - name: Unzip distribution
-      unarchive:
-        src: "{{ zip_file_path }}"
-        dest: "{{ asterix_dir }}/asterix-core-emulator/build/distributions"
-        remote_src: yes
+    # gatherAllArtifacts Gradle task handles zip extraction, BMC JAR copy, and re-archiving.
+    # The manual steps below are no longer needed but kept for reference.
+    # - name: Set zip file variables
+    #   set_fact:
+    #     zip_file_path: "{{ zip_files.files[0].path }}"
+    #     folder_name: "{{ zip_files.files[0].path | basename | regex_replace('\\.zip$', '') }}"
 
-    - name: Copy BMC emulator JAR
-      copy:
-        src: "{{ asterix_dir }}/asterix-bmc-emulator/build/libs/{{ asterix_bmc_jar }}"
-        dest: "{{ asterix_dir }}/asterix-core-emulator/build/distributions/{{ folder_name }}/{{ asterix_bmc_jar }}"
-        remote_src: yes
+    # - name: Unzip distribution
+    #   unarchive:
+    #     src: "{{ zip_file_path }}"
+    #     dest: "{{ asterix_dir }}/asterix-core-emulator/build/distributions"
+    #     remote_src: yes
 
-    - name: Remove old zip
-      file:
-        path: "{{ zip_file_path }}"
-        state: absent
+    # - name: Copy BMC emulator JAR
+    #   copy:
+    #     src: "{{ asterix_dir }}/asterix-bmc-emulator/build/libs/{{ asterix_bmc_jar }}"
+    #     dest: "{{ asterix_dir }}/asterix-core-emulator/build/distributions/{{ folder_name }}/{{ asterix_bmc_jar }}"
+    #     remote_src: yes
 
-    - name: Create new zip with BMC emulator
-      archive:
-        path: "{{ asterix_dir }}/asterix-core-emulator/build/distributions/{{ folder_name }}"
-        dest: "{{ zip_file_path }}"
-        format: zip
+    # - name: Remove old zip
+    #   file:
+    #     path: "{{ zip_file_path }}"
+    #     state: absent
+
+    # - name: Create new zip with BMC emulator
+    #   archive:
+    #     path: "{{ asterix_dir }}/asterix-core-emulator/build/distributions/{{ folder_name }}"
+    #     dest: "{{ zip_file_path }}"
+    #     format: zip
 
     # DEPLOY TO VHMC
     - name: Clean old emulator files on vHMC
