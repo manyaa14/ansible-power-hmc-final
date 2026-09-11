@@ -293,6 +293,15 @@
           hscpe@{{ vm_ip }} \
           "cd /home/hscpe && (unzip -o asterix-core-emulator*.zip 2>/dev/null || python3 -c \"import zipfile, glob; zipfile.ZipFile(glob.glob('asterix-core-emulator*.zip')[0]).extractall('.')\")"
 
+    - name: Fix execute permissions on Asterix scripts
+      shell: |
+        sshpass -p "{{ hscpe_pass }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -o UserKnownHostsFile=/dev/null \
+          -o LogLevel=ERROR \
+          hscpe@{{ vm_ip }} \
+          "chmod +x /home/hscpe/asterix-core-emulator-*/*.pl /home/hscpe/asterix-core-emulator-*/*.sh 2>/dev/null || true"
+
     - name: Verify emulator directory on vHMC
       shell: |
         sshpass -p "{{ hscpe_pass }}" ssh \
