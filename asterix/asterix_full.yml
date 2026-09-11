@@ -222,8 +222,14 @@
         regexp: '\bclassifier\s*='
         replace: 'archiveClassifier ='
 
+    - name: Patch build.gradle - remove Java toolchain constraint to use ambient JVM
+      replace:
+        path: "{{ asterix_dir }}/asterix-bmc-emulator/build.gradle"
+        regexp: '(?s)java\s*\{[^}]*toolchain\s*\{[^}]*\}[^}]*\}'
+        replace: ''
+
     - name: Build Asterix emulator
-      command: ./gradlew build
+      command: ./gradlew build --info --continue
       args:
         chdir: "{{ asterix_dir }}"
 
