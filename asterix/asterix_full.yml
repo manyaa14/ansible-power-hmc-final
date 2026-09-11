@@ -110,7 +110,7 @@
 
     # If verification failed, reinstall OpenCert one more time
     - name: Reinstall OpenCert if verification failed
-      when: needs_opencert and hscpe_verify.failed
+      when: needs_opencert | bool and (hscpe_verify is defined and hscpe_verify.failed | default(false))
       block:
         - name: Log reinstallation attempt
           debug:
@@ -167,11 +167,6 @@
       when: not repo_stat.stat.exists
       no_log: true
 
-    - name: Verify Java version
-      command: java -version
-      register: java_version
-      changed_when: false
-
     - name: Verify Gradle wrapper version
       command: ./gradlew --version
       args:
@@ -199,7 +194,8 @@
       register: java_version
       changed_when: false
 
-    - debug:
+    - name: Show Java version
+      debug:
         var: java_version.stderr_lines
 
     - name: Check JAVA_HOME
@@ -295,7 +291,7 @@
           -o UserKnownHostsFile=/dev/null \
           -o LogLevel=ERROR \
           hscpe@{{ vm_ip }} \
-          "cd /home/hscpe && unzip -o asterix-core-emulator*.zip"
+          "cd /home/hscpe && (unzip -o asterix-core-emulator*.zip 2>/dev/null || python3 -c \"import zipfile, glob; zipfile.ZipFile(glob.glob('asterix-core-emulator*.zip')[0]).extractall('.')\")"
 
     - name: Verify emulator directory on vHMC
       shell: |
@@ -387,7 +383,7 @@
 
     - name: Wait again if retried
       pause:
-        seconds: 10
+        seconds: 30
       when: logs_check.rc != 0
 
     - name: Recheck if logs folder exists after retry
