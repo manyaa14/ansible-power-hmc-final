@@ -486,6 +486,10 @@
           -o LogLevel=ERROR \
           hscpe@{{ vm_ip }} \
           "echo -e '{{ root_pass }}\n{{ asterix_root_pass }}' | su - -c '/opt/hsc/bin/mksysconn --ip {{ vm_ip }}'"
+      register: mksysconn_result
+      retries: 10
+      delay: 30
+      until: mksysconn_result.rc == 0
 
     - name: Wait for managed system to appear
       pause:
