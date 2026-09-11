@@ -216,6 +216,12 @@
         regexp: '^distributionUrl='
         line: 'distributionUrl=https\://services.gradle.org/distributions/gradle-8.8-bin.zip'
 
+    - name: Patch build.gradle - replace deprecated classifier with archiveClassifier (Gradle 8+)
+      replace:
+        path: "{{ asterix_dir }}/build.gradle"
+        regexp: '\bclassifier\s*='
+        replace: 'archiveClassifier ='
+
     - name: Build Asterix emulator
       command: ./gradlew build
       args:
