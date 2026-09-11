@@ -425,7 +425,7 @@
     # VERIFY ASTERIX RUNNING
     - name: Wait for Asterix to fully start
       pause:
-        seconds: 30
+        seconds: 60
 
     - name: Verify Asterix is running
       shell: |
@@ -434,9 +434,12 @@
           -o UserKnownHostsFile=/dev/null \
           -o LogLevel=ERROR \
           hscpe@{{ vm_ip }} \
-          "ps -ef | grep asterix-bmc-emulator | grep -v grep"
+          "echo '{{ root_pass }}' | su - -c 'ps -ef | grep asterix-bmc-emulator | grep -v grep'"
       register: verify_running
-      failed_when: verify_running.stdout == ""
+      retries: 5
+      delay: 30
+      until: verify_running.stdout != ""
+      failed_when: verify_running.stdout == "" and verify_running.attempts == 5
       changed_when: false
 
     # ENSURE SYSTEM DISCONNECTED
