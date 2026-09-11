@@ -428,7 +428,7 @@
           -o UserKnownHostsFile=/dev/null \
           -o LogLevel=ERROR \
           hscpe@{{ vm_ip }} \
-          "echo '{{ root_pass }}' | su - -c 'ps -ef | grep asterix-bmc-emulator | grep -v grep'"
+          "ps -ef | grep asterix-bmc-emulator | grep -v grep"
       register: verify_running
       retries: 5
       delay: 30
