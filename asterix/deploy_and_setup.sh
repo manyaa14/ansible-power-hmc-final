@@ -7,6 +7,10 @@
 
 set -euo pipefail
 
+# Install required Python dependencies for ibm.power_hmc collection modules
+python3 -m pip install --quiet --break-system-packages lxml pyOpenSSL 2>/dev/null || \
+python3 -m pip install --quiet lxml pyOpenSSL
+
 export ANSIBLE_HOST_KEY_CHECKING=False
 # Unset the SSH agent socket so the SSH client cannot offer agent keys before
 # password auth. Without this, sshpass-based connections (both in shell tasks
