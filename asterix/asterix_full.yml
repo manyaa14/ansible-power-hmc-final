@@ -226,7 +226,7 @@
 
     - name: Patch all subproject build.gradle files - set Java 17 source/target compatibility
       shell: |
-        find {{ asterix_dir }} -name "build.gradle" -not -path "*/build/*" | while read f; do
+        find {{ asterix_dir }} -mindepth 2 -name "build.gradle" -not -path "*/build/*" | while read f; do
           grep -q "sourceCompatibility" "$f" || echo "
         java {
             sourceCompatibility = JavaVersion.VERSION_17
