@@ -224,6 +224,17 @@
         regexp: '(?s)java\s*\{[^}]*toolchain\s*\{[^}]*\}[^}]*\}'
         replace: ''
 
+    - name: Patch build.gradle - target Java 17 bytecode so JAR runs on vHMC
+      blockinfile:
+        path: "{{ asterix_dir }}/asterix-bmc-emulator/build.gradle"
+        block: |
+          java {
+              sourceCompatibility = JavaVersion.VERSION_17
+              targetCompatibility = JavaVersion.VERSION_17
+          }
+        insertafter: EOF
+        marker: "// {mark} ANSIBLE MANAGED - Java compatibility"
+
     - name: Build Asterix emulator
       command: ./gradlew build
       args:
