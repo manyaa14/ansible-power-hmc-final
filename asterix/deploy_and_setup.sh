@@ -193,12 +193,61 @@ echo "Integration configuration updated"
 echo ""
 
 echo "Step 5: Running integration tests sequentially..."
-cd "${INTEGRATION_DIR}"
+
+# ansible-test must run from inside the installed collection directory tree,
+# not from the raw git checkout. Find where the collection was installed.
+COLLECTION_TEST_DIR="$(python3 -c "
+import subprocess, json
+result = subprocess.run(['ansible-galaxy', 'collection', 'list', '--format', 'json'],
+    capture_output=True, text=True)
+data = json.loads(result.stdout)
+for path, cols in data.items():
+    if 'ibm.power_hmc' in cols:
+        print(path + '/ansible_collections/ibm/power_hmc/tests/integration')
+        break
+" 2>/dev/null)"
+
+if [ -z "${COLLECTION_TEST_DIR}" ] || [ ! -d "${COLLECTION_TEST_DIR}" ]; then
+    # Fallback: search common install paths
+    for candidate in \
+        "${HOME}/.ansible/collections/ansible_collections/ibm/power_hmc/tests/integration" \
+        "/usr/share/ansible/collections/ansible_collections/ibm/power_hmc/tests/integration"; do
+        if [ -d "${candidate}" ]; then
+            COLLECTION_TEST_DIR="${candidate}"
+            break
+        fi
+    done
+fi
+
+if [ -z "${COLLECTION_TEST_DIR}" ]; then
+    echo "ERROR: Could not find installed collection test directory"
+    exit 1
+fi
+
+echo "Running tests from: ${COLLECTION_TEST_DIR}"
+
+# The integration_config and vars files must also be updated in the installed
+# collection, since ansible-test reads from there, not the git checkout.
+INSTALLED_INTEGRATION_DIR="${COLLECTION_TEST_DIR}"
+INSTALLED_CONFIG_FILE="${INSTALLED_INTEGRATION_DIR}/integration_config.yml"
+
+cp "${INTEGRATION_CONFIG_FILE}" "${INSTALLED_CONFIG_FILE}"
+
+for target_dir in "${INSTALLED_INTEGRATION_DIR}"/targets/*/tasks; do
+    module=$(basename "$(dirname "${target_dir}")")
+    src_vars="${INTEGRATION_DIR}/targets/${module}/tasks/vars.yaml"
+    dst_vars="${target_dir}/vars.yaml"
+    if [ -f "${src_vars}" ] && [ -f "${dst_vars}" ]; then
+        cp "${src_vars}" "${dst_vars}"
+    fi
+done
+
+cd "${COLLECTION_TEST_DIR}"
 
 ALL_LOG_FILES=()
 
 for module_name in "${MODULE_ORDER[@]}"; do
-    log_file="./test_${module_name}-FVTR.log"
+    log_file="${INTEGRATION_DIR}/test_${module_name}-FVTR.log"
     echo "------------------------------------------"
     echo "Running integration tests for ${module_name}"
     echo "Log file: ${log_file}"
@@ -214,7 +263,7 @@ done
 
 
 
-for existing_log in ./test_*-FVTR.log; do
+for existing_log in "${INTEGRATION_DIR}"/test_*-FVTR.log; do
     # Skip the combined summary log to prevent self-inclusion
     if [ "$(basename "${existing_log}")" = "test_all_modules-FVTR.log" ]; then
         continue
@@ -235,10 +284,7 @@ for existing_log in ./test_*-FVTR.log; do
     fi
 done
 
-
-
-
-combined_log_file="./test_all_modules-FVTR.log"
+combined_log_file="${INTEGRATION_DIR}/test_all_modules-FVTR.log"
 : > "${combined_log_file}"
 for log_file in "${ALL_LOG_FILES[@]}"; do
     cat "${log_file}" >> "${combined_log_file}"
