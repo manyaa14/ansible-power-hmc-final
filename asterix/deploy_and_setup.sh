@@ -262,7 +262,7 @@ for module_name in "${MODULE_ORDER[@]}"; do
     ALL_LOG_FILES+=("${log_file}")
 
     echo "Generating HTML report for ${module_name} from ${log_file}"
-    python3 "${REPORT_GENERATOR}" "${log_file}"
+    (cd "${COLLECTION_ROOT}" && python3 "${REPORT_GENERATOR}" "${log_file}")
 done
 
 
@@ -296,7 +296,7 @@ for log_file in "${ALL_LOG_FILES[@]}"; do
 done
 
 echo "Generating cumulative HTML summary from ${combined_log_file}"
-python3 "${REPORT_GENERATOR}" "${combined_log_file}"
+(cd "${COLLECTION_ROOT}" && python3 "${REPORT_GENERATOR}" "${combined_log_file}")
 
 echo ""
 echo "=========================================="
